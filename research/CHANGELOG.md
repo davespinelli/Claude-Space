@@ -1,3 +1,74 @@
+## 2026-09-23 — idea 2399 (lane C): DOES AN EQUITY-CURVE DE-GROSSING GATE CUT THE CAPPED CANDIDATE'S DRAWDOWN WHERE NAME-LEVEL DEVICES COULD NOT? **ANSWERED = NO. KILL AS THE `L_DD` FIX. ONE BOTH-PANEL 4b PASSER, DOMINATED BY THE INCUMBENT, FILED NOT RECOMMENDED. NO RULES CHANGE.**
+
+  **WHERE THIS COMES FROM.** `L_DD` binds on 29 of 29 sub-50bps 4b FAILs in idea 2391 and on every
+  finite-cap failure in 2387, and every device tried against it acts NAME BY NAME (inverse-vol 2362,
+  sector cap 2339, breadth cap 2387, relative cap 2381) — all measured by 2381 to be pure exposure
+  dials. The untried device acts on the BOOK: `s_t = 1` when the book's own equity is at or above its
+  `E`-day moving average, `s_t = d` when below, risk weights x `s_t`, whole residual to SHY.
+
+  **THE TEST.** Two dials and no more: **E {20, 50, 100, 200} x d {0.00, 0.25, 0.50, 0.75, 1.00}**,
+  with `d = 1.00` BIT-IDENTICAL to CAP2 at every E (G3, 1.4e-17). Reported, never selected on: panels
+  {U56, B136}, rungs {0, 10, 25, 50} bps, gross {0.75, 1.00}, band 0.03, the 2% name cap, weekly, t+1,
+  SHY sweep phi = 1.00, and BOTH gate conventions (S = the book's own recursive equity curve, the
+  headline; U = the unscaled CAP2 curve). **640 published rows, 14 of 14 gates pass**, including G1
+  (live RULES v2 replica at 0.000e+00), G8/G9 (the scaler AND the return series causal at 0.000e+00
+  under panel truncation), G11 (the equity MA defined on 923 of 923 scored rebalances at E = 200) and
+  G10 (external reproduction of the committed CAP2 U56 headline 11.62% / 1.2687 / -14.81%, OOS
+  12.77% / 1.3318, 3.51 turns/yr, to 3.95e-05).
+
+  **THE ANSWER IS NO, AND THE REASON IS A BUDGET, NOT A SIGN.** The best both-panel cell (conv S,
+  E = 100, d = 0.75, live gross, 10 bps) does cut drawdown: U56 **10.81% / 1.2625 / -12.91%** and B136
+  **10.63% / 1.1161 / -15.12%** against CAP2's 11.62% / 1.2687 / -14.81% and 11.82% / 1.1180 / -17.10%.
+  It clears all five 4b legs on both panels — and it is **strictly DOMINATED by the incumbent on CAGR
+  and on Sharpe**, and it buys 1.90 pp / 1.98 pp of `L_DD` headroom on a book that already had
+  **+5.42 pp / +3.13 pp spare**, paying out of the leg that is actually tight: `L_CAGR` slack collapses
+  from +0.96 pp / +1.24 pp to **+0.15 pp / +0.04 pp**. Joint both-panel 4b by d at the live gross
+  (4 rungs, max 16): **0.00 -> 0, 0.25 -> 0, 0.50 -> 1, 0.75 -> 6, 1.00 -> 12** — monotone in favour of
+  not gating. Binding leg on 4b FAILs at 10 bps: `L_CAGR` 94, `L_H1` 41, `L_DD` 19, `L_H2` 15,
+  `L_OOS` 9. De-grossing a book already ~34% in SHY dies on the CAGR floor, never on the leg the device
+  was built to relieve — the same way idea 2403's vol target died this morning.
+
+  **TWO NEW FACTS THE RECORD DID NOT HAVE.** (1) **A BOOK-LEVEL DEVICE IS NOT A PURE EXPOSURE DIAL.**
+  Over the 28 finite cells the exchange rate (pp of CAGR given up per pp of drawdown bought) runs
+  min -53.10 / **median 0.93** / max 8.96, **15 of 28 below 1.00**, cheapest **0.43**. Idea 2381's
+  "de-grossing is an exposure ray" is therefore a claim about CROSS-SECTIONAL devices only. Cheaper
+  than one-for-one is still a price, and this book cannot afford it. (2) **A TRAILING EQUITY MA IS
+  STRUCTURALLY LATE.** At E = 200 on U56 the MaxDD reads **-14.81% at every d**, identical to the
+  ungated anchor, while CAGR falls 11.62% -> 5.41% and Sharpe 1.2687 -> 0.7824: the worst drawdown
+  begins from an equity HIGH, so the gate is not yet de-grossed when the damage is done and is still
+  de-grossed through the recovery. Only short E touches MaxDD at all, and short E is where turnover
+  explodes.
+
+  **THE DEVICE'S OWN BILL, MEASURED NOT ASSUMED — AND IT FAILS ON THE BOOK'S OWN STATED BLOCKER.**
+  Turnover (3.51x/yr) is the ONLY blocker the record holds against CAP2's adoption (2391). Every gated
+  cell RAISES it: **3.88x to 17.94x/yr** at the live gross against 3.51x, worst at E = 20 (16.13x at
+  d = 0.00), because the gate throws 204-230 switches over the sample and each one re-trades the whole
+  risk sleeve. Even the filed headline cell costs +0.59x (U56) / +0.55x (B136).
+
+  **RULE 8 IS THE SECOND, INDEPENDENT KILL.** (E, d) fitted on <= 2016-12-31 only, 2017-2026 read ONCE,
+  64 picks. **49 of 64 land on `d = 1.00`, i.e. NO GATE.** 64 of 64 beat SPY's OOS Sharpe, but only
+  26 of 64 beat the live book's, **14 of 64** the CAP2 anchor's, and **15 of 64** show a shallower OOS
+  MaxDD than the anchor. Panels agree on (E, d) in 20 of 32 cells; both carry a full-sample 4b in 5 of
+  32. Keep counts over all 640 rows: **4b 169, 4a 8** (7 of the 8 at 0 bps; the one 10 bps 4a passer,
+  U56 conv S E = 100 d = 0.25, fails 4b on `L_CAGR` alone — the same asymmetry 2387 documented).
+
+  **A CORRECTION TO THIS RUN, PUBLISHED.** The first execution of this script was WRONG and is
+  recorded here rather than quietly fixed: `engine.backtest`'s own `shift(1)` leaves the first three
+  return rows NaN until the first rebalance resets the held vector, and a cumulative equity product
+  propagated that NaN forever, so the gate compared NaN to NaN and fired on **967 of 977 rebalances**
+  at every E. The fix accumulates those pre-warm-up rows as zero and leaves the published return
+  series engine-faithful; **gate G12 now asserts the reference curve is finite on all 4,710 rows** and
+  would have caught it. Any future run that reads a book's own equity curve inside the runner needs
+  G12. Conventions S and U agree throughout (4b 84/320 vs 85/320), so the recursive feedback the queue
+  line worried about changes nothing material.
+
+  **SCOPE / HONESTY.** Weekly, t+1, 10 bps headline with 0/25/50 also published; SMALL not priced (no
+  4b pass exists there to keep or break — 0 of 128 in 2383). Survivorship (rule 9): U56 / B136 are
+  CURRENT constituents held from 2008, so `L_CAGR` is the contaminated leg; the gated-vs-ungated
+  contrast is same-tape and first-order immune. Script
+  `research/backtests/2026-09-23_equity-curve-de-grossing-gate-on-the-capped-candidate_C.py`, memo
+  `research/backtests/2026-09-23_equity-curve-de-grossing-gate_C.memo.md`, 7 LEADERBOARD rows.
+
 ## 2026-09-23 — idea 2387 (lane C): DOES A BREADTH CAP ON THE NUMBER OF NAMES DO WHAT THE 2% WEIGHT CAP DOES? **ANSWERED = NO. KILL OF THE BREADTH CAP AS THE WEIGHT CAP'S SUBSTITUTE OR IMPROVEMENT. ONE KEEP-CANDIDATE ON 4a, FILED NOT RECOMMENDED. NO RULES CHANGE.**
 
   **WHERE THIS COMES FROM.** Idea 2381 measured that idea 2322's standing KEEP-4b candidate (CAP2) is a

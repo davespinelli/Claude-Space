@@ -1,0 +1,351 @@
+=== idea 2399 — DOES AN EQUITY-CURVE DE-GROSSING GATE CUT THE CAPPED CANDIDATE'S DRAWDOWN? ===
+    2026-09-23  lane C run 43   band 0.03  MA 200d  cadence W  t+1  rungs [0.0, 10.0, 25.0, 50.0] bps  cap 2%  sweep SHY (phi=1.00)
+    DIAL 1 equity-MA length E [20, 50, 100, 200]   DIAL 2 de-grossed multiplier d [0.0, 0.25, 0.5, 0.75, 1.0]
+    s_t = 1 when the book's equity >= its E-day MA, else d.  d = 1.00 IS CAP2 EXACTLY.
+    conventions: S (self-referential, HEADLINE, as the queue line words it) and U (unscaled CAP2 curve)
+    SMALL NOT PRICED: 0 of 128 4b cells in idea 2383 and 0 of 40-120 in 2318 / 2322 / 2326 / 2343 —
+    there is no pass on that panel to keep or break.
+    SURVIVORSHIP (rule 9): U56 / B136 are CURRENT constituents held from 2008; L_CAGR is the
+    contaminated leg.  The gated-vs-ungated contrast is same-tape and first-order immune.
+    GATE PASS  G7 exactly two tuned parameters: E, d (target 2)
+    GATE PASS  G0 >= 10y (U56): 17.7y scored, 56 investable, 4710 rows (target >= 10y)
+    GATE PASS  G0 >= 10y (B136): 17.7y scored, 136 investable, 4708 rows (target >= 10y)
+    GATE PASS  G2 the gate IS baseline.band_state (live clause 2), unmodified: 0 differing cells; mean names IN 36 (target 0)
+    GATE PASS  G1 per-column replica == engine.backtest (live RULES v2, sweep off): max|d| 0.000e+00 (target < 1e-12)
+    GATE PASS  G3 d = 1.00 == an independent CAP2 construction through engine.backtest, at every E: max|d| over 4 E values 1.388e-17 (target < 1e-12)
+    GATE PASS  G8 the gate s_t is causal (panel truncated at 2021-02-05, E 50, d 0.50): max|ds| 0.000e+00 (target < 1e-12)
+    GATE PASS  G9 no lookahead on the RETURN series (same truncation): max|dr| 0.000e+00 (target < 1e-12)
+    GATE PASS  G12 the reference equity curve is finite on every row (NaN-propagation trap): 0 non-finite of 4710 rows (target 0)
+    GATE PASS  G11 the equity MA is defined on every scored rebalance day at E = 200: 0 undefined of 923 scored rebalances (target 0)
+
+--- panel U56 (56 investable)  SPY 15.23% / 0.8897 / -33.72%   live RULES v2 8.65% / 1.2052 / -12.05%  halves 1.2262/1.1897
+    4b bars here: DD cap -20.23%   CAGR floor 10.66%   SPY halves 0.9566/0.8353   SPY OOS Sharpe 0.8831
+    ... U56 done (9s)
+
+--- panel B136 (136 investable)  SPY 15.12% / 0.8844 / -33.72%   live RULES v2 7.96% / 1.0972 / -12.24%  halves 1.2296/0.9669
+    4b bars here: DD cap -20.23%   CAGR floor 10.59%   SPY halves 0.9571/0.8249   SPY OOS Sharpe 0.8737
+    ... B136 done (18s)
+    GATE PASS  G4 no leverage (all books, realised row sums): max row sum 1.000000000 (target <= 1+1e-12)
+    GATE PASS  G6 sweep instrument priced on every held row: SHY non-null on both panels: True (target True)
+    GATE PASS  G5 the d dial BITES and mean RISK gross is MONOTONE along it (total gross is pinned at 1.0 by the SHY sweep, so the risk sleeve is the exposure): 32 of 32 (panel, conv, E, gross) cells (target 32 of 32)
+    GATE PASS  G10 reproduces the committed CAP2 U56 headline (11.62%/1.2687/-14.81%, OOS 12.77%/1.3318): read 11.62% / 1.2687 / -14.81%, OOS 12.77% / 1.3318, turnover 3.51x (committed 3.51x) -> max|d| 3.95e-05 (target < 1e-3)
+
+=== A. THE FULL LADDER AT 10 bps, gross 0.75, HEADLINE CONVENTION S — every point ===
+  panel   E     d |   CAGR   Sharpe    MaxDD |   H1     H2   | OOS CAGR  OOS Sh | 4a 4b | H1/H2/OOS/DD/CAGR | gate% risk_g turn/yr realvol
+  U56    20  0.00 |  5.57%  0.8898  -11.11% |  0.67   1.08 |   8.08%  1.1607 | .  .  | 01110             | 46.2%  0.362   16.13  0.063
+  U56    20  0.25 |  6.72%  1.0778   -9.26% |  0.86   1.27 |   8.44%  1.2926 | .  .  | 01110             | 41.8%  0.463   13.81  0.062
+  U56    20  0.50 |  8.54%  1.1992  -11.04% |  1.09   1.30 |  10.28%  1.3790 | .  .  | 11110             | 36.2%  0.547   10.60  0.070
+  U56    20  0.75 | 10.29%  1.2699  -12.91% |  1.26   1.29 |  11.60%  1.3709 | .  .  | 11110             | 32.6%  0.607    6.61  0.080
+  U56    20  1.00 | 11.62%  1.2687  -14.81% |  1.30   1.25 |  12.77%  1.3318 | .  Y  | 11111             |  0.0%  0.656    3.51  0.090   <= CAP2 (anchor)
+  U56    50  0.00 |  5.18%  0.8358  -10.58% |  0.71   0.95 |   6.24%  0.9655 | .  .  | 01110             | 50.4%  0.341    8.89  0.063
+  U56    50  0.25 |  7.51%  1.1052   -9.86% |  0.94   1.26 |   9.43%  1.3192 | .  .  | 01110             | 39.7%  0.481    8.76  0.068
+  U56    50  0.50 |  9.23%  1.2096  -11.35% |  1.18   1.24 |  10.65%  1.3355 | .  .  | 11110             | 31.9%  0.569    7.08  0.075
+  U56    50  0.75 | 10.61%  1.2650  -12.91% |  1.29   1.25 |  11.79%  1.3416 | .  .  | 11110             | 28.4%  0.619    5.05  0.082
+  U56    50  1.00 | 11.62%  1.2687  -14.81% |  1.30   1.25 |  12.77%  1.3318 | .  Y  | 11111             |  0.0%  0.656    3.51  0.090   <= CAP2 (anchor)
+  U56   100  0.00 |  5.10%  0.8309  -10.56% |  0.56   1.05 |   7.11%  1.0407 | .  .  | 01110             | 51.7%  0.340    5.67  0.062
+  U56   100  0.25 |  9.72%  1.2878  -10.63% |  1.23   1.34 |  11.31%  1.4234 | Y  .  | 11110             | 32.3%  0.531    4.91  0.074
+  U56   100  0.50 |  9.96%  1.2486  -11.04% |  1.22   1.28 |  11.62%  1.3837 | .  .  | 11110             | 29.5%  0.584    5.12  0.079
+  U56   100  0.75 | 10.81%  1.2625  -12.91% |  1.26   1.27 |  12.25%  1.3669 | .  Y  | 11111             | 25.8%  0.626    4.09  0.084
+  U56   100  1.00 | 11.62%  1.2687  -14.81% |  1.30   1.25 |  12.77%  1.3318 | .  Y  | 11111             |  0.0%  0.656    3.51  0.090   <= CAP2 (anchor)
+  U56   200  0.00 |  5.41%  0.7824  -14.81% |  0.90   0.70 |   6.33%  0.8484 | .  .  | 00010             | 46.0%  0.383    3.91  0.071
+  U56   200  0.25 |  8.98%  1.0921  -14.81% |  1.08   1.11 |  10.73%  1.2186 | .  .  | 11110             | 25.5%  0.563    4.62  0.082
+  U56   200  0.50 | 10.44%  1.2097  -14.81% |  1.25   1.18 |  11.66%  1.2763 | .  .  | 11110             | 21.1%  0.610    4.16  0.085
+  U56   200  0.75 | 11.01%  1.2365  -14.81% |  1.26   1.23 |  12.33%  1.3172 | .  Y  | 11111             | 18.6%  0.636    3.88  0.088
+  U56   200  1.00 | 11.62%  1.2687  -14.81% |  1.30   1.25 |  12.77%  1.3318 | .  Y  | 11111             |  0.0%  0.656    3.51  0.090   <= CAP2 (anchor)
+  B136   20  0.00 |  4.92%  0.6842  -14.06% |  0.67   0.70 |   5.58%  0.7507 | .  .  | 00010             | 44.7%  0.406   17.94  0.074
+  B136   20  0.25 |  7.06%  1.0154  -13.69% |  0.96   1.07 |   8.27%  1.1609 | .  .  | 01110             | 39.5%  0.516   15.10  0.070
+  B136   20  0.50 |  8.59%  1.0819  -14.39% |  1.10   1.07 |   9.39%  1.1741 | .  .  | 11110             | 35.0%  0.604   11.79  0.079
+  B136   20  0.75 | 10.21%  1.1093  -15.27% |  1.20   1.02 |  10.43%  1.1255 | .  .  | 11110             | 32.0%  0.672    7.90  0.091
+  B136   20  1.00 | 11.82%  1.1180  -17.10% |  1.26   0.99 |  11.65%  1.0936 | .  Y  | 11111             |  0.0%  0.728    4.68  0.105   <= CAP2 (anchor)
+  B136   50  0.00 |  3.75%  0.5926  -15.31% |  0.59   0.59 |   4.02%  0.6398 | .  .  | 00010             | 53.4%  0.344    9.96  0.066
+  B136   50  0.25 |  6.19%  0.8840  -13.37% |  0.74   1.02 |   8.14%  1.1174 | .  .  | 01110             | 41.9%  0.505   10.47  0.071
+  B136   50  0.50 |  8.61%  1.0455  -14.42% |  1.12   0.97 |   9.07%  1.0961 | .  .  | 11110             | 31.6%  0.618    9.02  0.082
+  B136   50  0.75 | 10.16%  1.0808  -15.40% |  1.20   0.97 |  10.29%  1.0898 | .  .  | 11110             | 27.2%  0.681    6.34  0.094
+  B136   50  1.00 | 11.82%  1.1180  -17.10% |  1.26   0.99 |  11.65%  1.0936 | .  Y  | 11111             |  0.0%  0.728    4.68  0.105   <= CAP2 (anchor)
+  B136  100  0.00 |  3.93%  0.6471  -11.69% |  0.26   0.97 |   6.53%  0.9857 | .  .  | 01110             | 54.2%  0.339    6.63  0.063
+  B136  100  0.25 |  7.46%  1.0150  -12.19% |  1.00   1.03 |   8.74%  1.1530 | .  .  | 11110             | 37.4%  0.531    7.18  0.074
+  B136  100  0.50 |  9.26%  1.0925  -13.20% |  1.19   1.00 |   9.68%  1.1300 | .  .  | 11110             | 27.4%  0.634    6.17  0.084
+  B136  100  0.75 | 10.63%  1.1161  -15.12% |  1.22   1.02 |  10.85%  1.1346 | .  Y  | 11111             | 23.0%  0.689    5.23  0.095
+  B136  100  1.00 | 11.82%  1.1180  -17.10% |  1.26   0.99 |  11.65%  1.0936 | .  Y  | 11111             |  0.0%  0.728    4.68  0.105   <= CAP2 (anchor)
+  B136  200  0.00 |  3.75%  0.5573  -17.25% |  0.82   0.31 |   3.54%  0.5240 | .  .  | 00010             | 53.0%  0.346    4.29  0.071
+  B136  200  0.25 |  7.95%  0.9580  -16.66% |  1.07   0.87 |   8.85%  1.0116 | .  .  | 11110             | 30.7%  0.566    5.20  0.083
+  B136  200  0.50 | 10.14%  1.0985  -16.66% |  1.24   0.97 |  10.33%  1.0931 | .  .  | 11110             | 21.7%  0.654    4.86  0.092
+  B136  200  0.75 | 10.74%  1.0869  -16.66% |  1.25   0.94 |  10.61%  1.0574 | .  Y  | 11111             | 18.7%  0.697    4.92  0.098
+  B136  200  1.00 | 11.82%  1.1180  -17.10% |  1.26   0.99 |  11.65%  1.0936 | .  Y  | 11111             |  0.0%  0.728    4.68  0.105   <= CAP2 (anchor)
+
+=== B. DOES IT BUY `L_DD` WITHOUT PAYING `L_CAGR`?  deltas vs the CAP2 anchor, 10 bps, g=0.75 ===
+    (THE WHOLE QUESTION.  A name-level dial pays CAGR one-for-one — idea 2381 measured that.
+     'pp of CAGR given up per pp of drawdown bought' is the exchange rate; < 1.0 is a real win.)
+  U56 CAP2 anchor: 11.62% / 1.2687 / -14.81%  (m_DD +0.0542, m_CAGR +0.0096)
+    E  20 d 0.00:  dCAGR -6.05%  dSharpe -0.3788  dMaxDD +3.70%  dOOS_Sh -0.1712  |  exchange rate    1.64 pp CAGR per pp of DD  | 4b .
+    E  20 d 0.25:  dCAGR -4.91%  dSharpe -0.1909  dMaxDD +5.55%  dOOS_Sh -0.0392  |  exchange rate    0.88 pp CAGR per pp of DD  | 4b .
+    E  20 d 0.50:  dCAGR -3.09%  dSharpe -0.0695  dMaxDD +3.77%  dOOS_Sh +0.0471  |  exchange rate    0.82 pp CAGR per pp of DD  | 4b .
+    E  20 d 0.75:  dCAGR -1.34%  dSharpe +0.0012  dMaxDD +1.90%  dOOS_Sh +0.0390  |  exchange rate    0.70 pp CAGR per pp of DD  | 4b .
+    E  50 d 0.00:  dCAGR -6.44%  dSharpe -0.4329  dMaxDD +4.23%  dOOS_Sh -0.3664  |  exchange rate    1.52 pp CAGR per pp of DD  | 4b .
+    E  50 d 0.25:  dCAGR -4.12%  dSharpe -0.1635  dMaxDD +4.95%  dOOS_Sh -0.0127  |  exchange rate    0.83 pp CAGR per pp of DD  | 4b .
+    E  50 d 0.50:  dCAGR -2.40%  dSharpe -0.0590  dMaxDD +3.46%  dOOS_Sh +0.0037  |  exchange rate    0.69 pp CAGR per pp of DD  | 4b .
+    E  50 d 0.75:  dCAGR -1.01%  dSharpe -0.0037  dMaxDD +1.90%  dOOS_Sh +0.0097  |  exchange rate    0.53 pp CAGR per pp of DD  | 4b .
+    E 100 d 0.00:  dCAGR -6.52%  dSharpe -0.4378  dMaxDD +4.25%  dOOS_Sh -0.2911  |  exchange rate    1.54 pp CAGR per pp of DD  | 4b .
+    E 100 d 0.25:  dCAGR -1.90%  dSharpe +0.0191  dMaxDD +4.17%  dOOS_Sh +0.0915  |  exchange rate    0.45 pp CAGR per pp of DD  | 4b .
+    E 100 d 0.50:  dCAGR -1.67%  dSharpe -0.0201  dMaxDD +3.77%  dOOS_Sh +0.0518  |  exchange rate    0.44 pp CAGR per pp of DD  | 4b .
+    E 100 d 0.75:  dCAGR -0.81%  dSharpe -0.0061  dMaxDD +1.90%  dOOS_Sh +0.0350  |  exchange rate    0.43 pp CAGR per pp of DD  | 4b Y
+    E 200 d 0.00:  dCAGR -6.21%  dSharpe -0.4862  dMaxDD +0.00%  dOOS_Sh -0.4834  |  exchange rate     nan pp CAGR per pp of DD  | 4b .
+    E 200 d 0.25:  dCAGR -2.65%  dSharpe -0.1766  dMaxDD +0.00%  dOOS_Sh -0.1132  |  exchange rate     nan pp CAGR per pp of DD  | 4b .
+    E 200 d 0.50:  dCAGR -1.18%  dSharpe -0.0590  dMaxDD +0.00%  dOOS_Sh -0.0555  |  exchange rate     nan pp CAGR per pp of DD  | 4b .
+    E 200 d 0.75:  dCAGR -0.61%  dSharpe -0.0322  dMaxDD +0.00%  dOOS_Sh -0.0147  |  exchange rate     nan pp CAGR per pp of DD  | 4b Y
+  B136 CAP2 anchor: 11.82% / 1.1180 / -17.10%  (m_DD +0.0313, m_CAGR +0.0123)
+    E  20 d 0.00:  dCAGR -6.90%  dSharpe -0.4337  dMaxDD +3.04%  dOOS_Sh -0.3429  |  exchange rate    2.27 pp CAGR per pp of DD  | 4b .
+    E  20 d 0.25:  dCAGR -4.76%  dSharpe -0.1026  dMaxDD +3.40%  dOOS_Sh +0.0673  |  exchange rate    1.40 pp CAGR per pp of DD  | 4b .
+    E  20 d 0.50:  dCAGR -3.24%  dSharpe -0.0360  dMaxDD +2.70%  dOOS_Sh +0.0805  |  exchange rate    1.20 pp CAGR per pp of DD  | 4b .
+    E  20 d 0.75:  dCAGR -1.61%  dSharpe -0.0086  dMaxDD +1.83%  dOOS_Sh +0.0320  |  exchange rate    0.88 pp CAGR per pp of DD  | 4b .
+    E  50 d 0.00:  dCAGR -8.07%  dSharpe -0.5254  dMaxDD +1.79%  dOOS_Sh -0.4538  |  exchange rate    4.50 pp CAGR per pp of DD  | 4b .
+    E  50 d 0.25:  dCAGR -5.63%  dSharpe -0.2340  dMaxDD +3.72%  dOOS_Sh +0.0239  |  exchange rate    1.51 pp CAGR per pp of DD  | 4b .
+    E  50 d 0.50:  dCAGR -3.21%  dSharpe -0.0725  dMaxDD +2.68%  dOOS_Sh +0.0025  |  exchange rate    1.20 pp CAGR per pp of DD  | 4b .
+    E  50 d 0.75:  dCAGR -1.66%  dSharpe -0.0371  dMaxDD +1.70%  dOOS_Sh -0.0038  |  exchange rate    0.98 pp CAGR per pp of DD  | 4b .
+    E 100 d 0.00:  dCAGR -7.89%  dSharpe -0.4709  dMaxDD +5.40%  dOOS_Sh -0.1079  |  exchange rate    1.46 pp CAGR per pp of DD  | 4b .
+    E 100 d 0.25:  dCAGR -4.36%  dSharpe -0.1029  dMaxDD +4.90%  dOOS_Sh +0.0594  |  exchange rate    0.89 pp CAGR per pp of DD  | 4b .
+    E 100 d 0.50:  dCAGR -2.56%  dSharpe -0.0255  dMaxDD +3.89%  dOOS_Sh +0.0364  |  exchange rate    0.66 pp CAGR per pp of DD  | 4b .
+    E 100 d 0.75:  dCAGR -1.19%  dSharpe -0.0019  dMaxDD +1.98%  dOOS_Sh +0.0411  |  exchange rate    0.60 pp CAGR per pp of DD  | 4b Y
+    E 200 d 0.00:  dCAGR -8.07%  dSharpe -0.5606  dMaxDD -0.15%  dOOS_Sh -0.5696  |  exchange rate  -53.10 pp CAGR per pp of DD  | 4b .
+    E 200 d 0.25:  dCAGR -3.88%  dSharpe -0.1599  dMaxDD +0.43%  dOOS_Sh -0.0820  |  exchange rate    8.96 pp CAGR per pp of DD  | 4b .
+    E 200 d 0.50:  dCAGR -1.68%  dSharpe -0.0195  dMaxDD +0.43%  dOOS_Sh -0.0005  |  exchange rate    3.89 pp CAGR per pp of DD  | 4b .
+    E 200 d 0.75:  dCAGR -1.08%  dSharpe -0.0310  dMaxDD +0.43%  dOOS_Sh -0.0361  |  exchange rate    2.49 pp CAGR per pp of DD  | 4b Y
+  exchange rate over the 28 finite cells: min -53.10  median 0.93  max 8.96   cells at rate < 1.0 (drawdown bought cheaper than one-for-one): 15 of 28
+  cells where the gate made drawdown WORSE (dMaxDD < 0): 1 of 32
+  cells where Sharpe IMPROVED (dSharpe > 0): 2 of 32
+
+=== C. KEEP COUNTS OVER ALL 640 PUBLISHED ROWS (4 E x 5 d x 2 conv x 2 gross x 2 panels x 4 rungs) ===
+  4b passes: 169 of 640      4a passes: 8 of 640
+     0.0 bps:  4b  74/160   4a   7/160   binding leg on 4b FAILs: L_H1 24  L_H2 9  L_OOS 5  L_DD 15  L_CAGR 73
+    10.0 bps:  4b  54/160   4a   1/160   binding leg on 4b FAILs: L_H1 41  L_H2 15  L_OOS 9  L_DD 19  L_CAGR 94
+    25.0 bps:  4b  33/160   4a   0/160   binding leg on 4b FAILs: L_H1 69  L_H2 48  L_OOS 36  L_DD 27  L_CAGR 114
+    50.0 bps:  4b   8/160   4a   0/160   binding leg on 4b FAILs: L_H1 103  L_H2 110  L_OOS 88  L_DD 62  L_CAGR 142
+   convention S: 4b  84/320   4a   5/320
+   convention U: 4b  85/320   4a   3/320
+   d 0.00 (conv S): 4b   0/64   4a   0/64
+   d 0.25 (conv S): 4b   2/64   4a   2/64
+   d 0.50 (conv S): 4b  11/64   4a   3/64
+   d 0.75 (conv S): 4b  31/64   4a   0/64
+   d 1.00 (conv S): 4b  40/64   4a   0/64
+   E  20 (conv S, d < 1 only): 4b  10/64   4a   1/64
+   E  50 (conv S, d < 1 only): 4b   9/64   4a   1/64
+   E 100 (conv S, d < 1 only): 4b  14/64   4a   3/64
+   E 200 (conv S, d < 1 only): 4b  11/64   4a   0/64
+
+  JOINT BOTH-PANEL 4b (U56 AND B136 at the same E, d, conv, gross, rung):
+   joint 4b: 54 of 320 cells   [CAP2 anchor (d = 1.00): 24 of 64]
+   convention S: d 0.00 0/32  d 0.25 0/32  d 0.50 2/32  d 0.75 13/32  d 1.00 12/32
+   convention U: d 0.00 0/32  d 0.25 0/32  d 0.50 3/32  d 0.75 12/32  d 1.00 12/32
+   joint 4b at the LIVE gross 0.75 only (conv S): d 0.00 0/16  d 0.25 0/16  d 0.50 1/16  d 0.75 6/16  d 1.00 12/16
+
+  4a PASSES (Sharpe > live RULES v2 in BOTH halves AND MaxDD no worse) — every one, listed:
+    U56   conv S E  20 d 0.50 g 0.75   0.0bps   9.69% / 1.3486 / -10.97%  halves 1.2603/1.4313  4b .
+    U56   conv S E  50 d 0.50 g 0.75   0.0bps  10.00% / 1.3033 / -10.97%  halves 1.2796/1.3287  4b .
+    U56   conv S E 100 d 0.25 g 0.75   0.0bps  10.26% / 1.3537 / -10.06%  halves 1.2984/1.4077  4b .
+    U56   conv S E 100 d 0.25 g 0.75  10.0bps   9.72% / 1.2878 / -10.63%  halves 1.2319/1.3420  4b .
+    U56   conv S E 100 d 0.50 g 0.75   0.0bps  10.52% / 1.3135 / -10.97%  halves 1.2837/1.3453  4b .
+    U56   conv U E  20 d 0.25 g 0.75   0.0bps   8.91% / 1.3047 /  -9.10%  halves 1.2275/1.3774  4b .
+    U56   conv U E  20 d 0.50 g 0.75   0.0bps   9.96% / 1.3542 / -10.97%  halves 1.3179/1.3911  4b .
+    U56   conv U E  50 d 0.50 g 0.75   0.0bps  10.02% / 1.2629 / -11.14%  halves 1.2495/1.2789  4b .
+
+  4b PASSES WITH d < 1.00 (i.e. the DEVICE passing, not the anchor) — every one, listed:
+    U56   conv S E  20 d 0.75 g 0.75   0.0bps  11.02% / 1.3522 / -12.86%  halves 1.3469/1.3624  OOS 12.32%/1.4479
+    U56   conv S E  50 d 0.75 g 0.75   0.0bps  11.17% / 1.3261 / -12.86%  halves 1.3523/1.3096  OOS 12.36%/1.4003
+    U56   conv S E 100 d 0.75 g 0.75   0.0bps  11.26% / 1.3113 / -12.86%  halves 1.3085/1.3194  OOS 12.69%/1.4108
+    U56   conv S E 100 d 0.75 g 0.75  10.0bps  10.81% / 1.2625 / -12.91%  halves 1.2555/1.2741  OOS 12.25%/1.3669
+    U56   conv S E 200 d 0.50 g 0.75   0.0bps  10.90% / 1.2588 / -14.77%  halves 1.3059/1.2272  OOS 12.11%/1.3214
+    U56   conv S E 200 d 0.75 g 0.75   0.0bps  11.44% / 1.2811 / -14.77%  halves 1.3032/1.2692  OOS 12.75%/1.3581
+    U56   conv S E 200 d 0.75 g 0.75  10.0bps  11.01% / 1.2365 / -14.81%  halves 1.2553/1.2272  OOS 12.33%/1.3172
+    U56   conv U E  20 d 0.75 g 0.75   0.0bps  11.00% / 1.3465 / -12.86%  halves 1.3493/1.3499  OOS 12.23%/1.4324
+    U56   conv U E  50 d 0.75 g 0.75   0.0bps  11.02% / 1.3001 / -12.86%  halves 1.3111/1.2958  OOS 12.28%/1.3869
+    U56   conv U E 100 d 0.75 g 0.75   0.0bps  11.23% / 1.2831 / -15.04%  halves 1.2904/1.2830  OOS 12.61%/1.3739
+    U56   conv U E 100 d 0.75 g 0.75  10.0bps  10.77% / 1.2349 / -15.11%  halves 1.2400/1.2365  OOS 12.16%/1.3288
+    U56   conv U E 200 d 0.50 g 0.75   0.0bps  10.83% / 1.2293 / -14.77%  halves 1.2417/1.2260  OOS 12.25%/1.3185
+    U56   conv U E 200 d 0.75 g 0.75   0.0bps  11.42% / 1.2732 / -14.77%  halves 1.2981/1.2589  OOS 12.71%/1.3478
+    U56   conv U E 200 d 0.75 g 0.75  10.0bps  10.99% / 1.2286 / -14.81%  halves 1.2509/1.2163  OOS 12.29%/1.3064
+    U56   conv S E  20 d 0.75 g 1.00   0.0bps  12.01% / 1.2935 / -15.37%  halves 1.3019/1.2945  OOS 13.65%/1.3852
+    U56   conv S E  20 d 0.75 g 1.00  10.0bps  11.14% / 1.2093 / -15.45%  halves 1.2124/1.2141  OOS 12.77%/1.3049
+    U56   conv S E  50 d 0.75 g 1.00   0.0bps  12.14% / 1.2622 / -15.37%  halves 1.2813/1.2543  OOS 13.80%/1.3496
+    U56   conv S E  50 d 0.75 g 1.00  10.0bps  11.48% / 1.2000 / -15.45%  halves 1.2173/1.1932  OOS 13.12%/1.2892
+    U56   conv S E 100 d 0.25 g 1.00   0.0bps  10.69% / 1.2213 / -11.71%  halves 1.1946/1.2519  OOS 12.57%/1.3427
+    U56   conv S E 100 d 0.50 g 1.00   0.0bps  11.25% / 1.2176 / -13.53%  halves 1.1719/1.2644  OOS 13.55%/1.3668
+    U56   conv S E 100 d 0.75 g 1.00   0.0bps  12.31% / 1.2511 / -15.37%  halves 1.2538/1.2570  OOS 14.16%/1.3529
+    U56   conv S E 100 d 0.75 g 1.00  10.0bps  11.75% / 1.2001 / -15.45%  halves 1.1986/1.2092  OOS 13.62%/1.3065
+    U56   conv S E 100 d 0.75 g 1.00  25.0bps  10.93% / 1.1233 / -15.58%  halves 1.1155/1.1372  OOS 12.82%/1.2365
+    U56   conv S E 200 d 0.50 g 1.00   0.0bps  11.97% / 1.2097 / -17.22%  halves 1.2235/1.2077  OOS 13.82%/1.3048
+    U56   conv S E 200 d 0.50 g 1.00  10.0bps  11.43% / 1.1599 / -17.28%  halves 1.1703/1.1604  OOS 13.28%/1.2588
+    U56   conv S E 200 d 0.75 g 1.00   0.0bps  12.61% / 1.2379 / -17.22%  halves 1.2395/1.2456  OOS 14.54%/1.3374
+    U56   conv S E 200 d 0.75 g 1.00  10.0bps  12.12% / 1.1947 / -17.28%  halves 1.1932/1.2047  OOS 14.06%/1.2974
+    U56   conv S E 200 d 0.75 g 1.00  25.0bps  11.40% / 1.1297 / -17.36%  halves 1.1235/1.1432  OOS 13.34%/1.2373
+    U56   conv U E  20 d 0.50 g 1.00   0.0bps  10.84% / 1.2886 / -13.53%  halves 1.2762/1.3071  OOS 12.44%/1.3888
+    U56   conv U E  20 d 0.75 g 1.00   0.0bps  11.99% / 1.2883 / -15.37%  halves 1.2980/1.2886  OOS 13.61%/1.3758
+    U56   conv U E  20 d 0.75 g 1.00  10.0bps  11.13% / 1.2044 / -15.45%  halves 1.2079/1.2093  OOS 12.74%/1.2965
+    U56   conv U E  50 d 0.50 g 1.00   0.0bps  10.85% / 1.1968 / -13.53%  halves 1.2019/1.1996  OOS 12.54%/1.3015
+    U56   conv U E  50 d 0.75 g 1.00   0.0bps  11.99% / 1.2413 / -15.37%  halves 1.2578/1.2353  OOS 13.66%/1.3312
+    U56   conv U E  50 d 0.75 g 1.00  10.0bps  11.31% / 1.1777 / -15.45%  halves 1.1907/1.1742  OOS 12.97%/1.2708
+    U56   conv U E 100 d 0.50 g 1.00   0.0bps  11.27% / 1.1862 / -13.53%  halves 1.1441/1.2282  OOS 13.37%/1.3310
+    U56   conv U E 100 d 0.75 g 1.00   0.0bps  12.20% / 1.2318 / -15.37%  halves 1.2237/1.2457  OOS 14.07%/1.3420
+    U56   conv U E 100 d 0.75 g 1.00  10.0bps  11.66% / 1.1825 / -15.45%  halves 1.1724/1.1978  OOS 13.53%/1.2955
+    U56   conv U E 100 d 0.75 g 1.00  25.0bps  10.86% / 1.1083 / -15.58%  halves 1.0952/1.1257  OOS 12.72%/1.2255
+    U56   conv U E 200 d 0.25 g 1.00   0.0bps  11.26% / 1.1310 / -17.22%  halves 1.1168/1.1516  OOS 13.36%/1.2507
+    U56   conv U E 200 d 0.50 g 1.00   0.0bps  11.88% / 1.1801 / -17.22%  halves 1.1815/1.1880  OOS 13.83%/1.2841
+    U56   conv U E 200 d 0.50 g 1.00  10.0bps  11.32% / 1.1297 / -17.28%  halves 1.1269/1.1407  OOS 13.28%/1.2381
+    U56   conv U E 200 d 0.75 g 1.00   0.0bps  12.50% / 1.2225 / -17.22%  halves 1.2379/1.2186  OOS 14.29%/1.3115
+    U56   conv U E 200 d 0.75 g 1.00  10.0bps  12.00% / 1.1783 / -17.28%  halves 1.1912/1.1761  OOS 13.79%/1.2701
+    U56   conv U E 200 d 0.75 g 1.00  25.0bps  11.26% / 1.1118 / -17.36%  halves 1.1209/1.1123  OOS 13.05%/1.2078
+    B136  conv S E  20 d 0.75 g 0.75   0.0bps  11.09% / 1.1959 / -14.58%  halves 1.2932/1.1074  OOS 11.29%/1.2099
+    B136  conv S E  50 d 0.75 g 0.75   0.0bps  10.86% / 1.1485 / -14.77%  halves 1.2646/1.0420  OOS 11.00%/1.1580
+    B136  conv S E 100 d 0.75 g 0.75   0.0bps  11.21% / 1.1715 / -14.66%  halves 1.2786/1.0729  OOS 11.42%/1.1887
+    B136  conv S E 100 d 0.75 g 0.75  10.0bps  10.63% / 1.1161 / -15.12%  halves 1.2235/1.0172  OOS 10.85%/1.1346
+    B136  conv S E 200 d 0.50 g 0.75   0.0bps  10.67% / 1.1518 / -16.61%  halves 1.2962/1.0269  OOS 10.89%/1.1467
+    B136  conv S E 200 d 0.75 g 0.75   0.0bps  11.29% / 1.1371 / -16.61%  halves 1.2967/0.9966  OOS 11.18%/1.1089
+    B136  conv S E 200 d 0.75 g 0.75  10.0bps  10.74% / 1.0869 / -16.66%  halves 1.2494/0.9437  OOS 10.61%/1.0574
+    B136  conv U E  20 d 0.75 g 0.75   0.0bps  11.13% / 1.1938 / -14.71%  halves 1.2767/1.1179  OOS 11.42%/1.2195
+    B136  conv U E  50 d 0.75 g 0.75   0.0bps  11.16% / 1.1680 / -15.18%  halves 1.2859/1.0596  OOS 11.24%/1.1735
+    B136  conv U E 100 d 0.75 g 0.75   0.0bps  11.26% / 1.1692 / -15.11%  halves 1.2760/1.0710  OOS 11.47%/1.1858
+    B136  conv U E 100 d 0.75 g 0.75  10.0bps  10.69% / 1.1144 / -15.63%  halves 1.2228/1.0147  OOS 10.90%/1.1313
+    B136  conv U E 200 d 0.75 g 0.75   0.0bps  11.29% / 1.1280 / -16.61%  halves 1.2453/1.0242  OOS 11.52%/1.1341
+    B136  conv U E 200 d 0.75 g 0.75  10.0bps  10.75% / 1.0781 / -16.66%  halves 1.1959/0.9738  OOS 10.97%/1.0850
+    B136  conv S E  20 d 0.25 g 1.00   0.0bps  11.25% / 1.2335 / -15.25%  halves 1.3463/1.1286  OOS 11.32%/1.2340
+    B136  conv S E  20 d 0.50 g 1.00   0.0bps  12.43% / 1.1868 / -16.50%  halves 1.2426/1.1349  OOS 13.14%/1.2479
+    B136  conv S E  20 d 0.50 g 1.00  10.0bps  10.66% / 1.0333 / -17.05%  halves 1.0801/0.9897  OOS 11.42%/1.1004
+    B136  conv S E  20 d 0.75 g 1.00   0.0bps  14.05% / 1.1604 / -19.39%  halves 1.2642/1.0652  OOS 14.26%/1.1719
+    B136  conv S E  20 d 0.75 g 1.00  10.0bps  12.87% / 1.0730 / -19.46%  halves 1.1735/0.9807  OOS 13.10%/1.0869
+    B136  conv S E  20 d 0.75 g 1.00  25.0bps  11.11% / 0.9414 / -19.56%  halves 1.0369/0.8536  OOS 11.38%/0.9589
+    B136  conv S E  50 d 0.50 g 1.00   0.0bps  12.09% / 1.1173 / -16.50%  halves 1.1956/1.0442  OOS 12.72%/1.1694
+    B136  conv S E  50 d 0.50 g 1.00  10.0bps  10.75% / 1.0055 / -17.52%  halves 1.0819/0.9341  OOS 11.42%/1.0607
+    B136  conv S E  50 d 0.75 g 1.00   0.0bps  13.55% / 1.0981 / -19.39%  halves 1.2064/0.9981  OOS 13.80%/1.1140
+    B136  conv S E  50 d 0.75 g 1.00  10.0bps  12.60% / 1.0291 / -19.46%  halves 1.1365/0.9299  OOS 12.86%/1.0467
+    B136  conv S E  50 d 0.75 g 1.00  25.0bps  11.17% / 0.9253 / -19.56%  halves 1.0314/0.8272  OOS 11.47%/0.9455
+    B136  conv S E 100 d 0.50 g 1.00   0.0bps  12.73% / 1.1366 / -16.50%  halves 1.2387/1.0426  OOS 13.26%/1.1718
+    B136  conv S E 100 d 0.50 g 1.00  10.0bps  11.86% / 1.0665 / -16.59%  halves 1.1685/0.9724  OOS 12.39%/1.1026
+    B136  conv S E 100 d 0.75 g 1.00   0.0bps  14.26% / 1.1378 / -19.39%  halves 1.2628/1.0222  OOS 14.35%/1.1422
+    B136  conv S E 100 d 0.75 g 1.00  10.0bps  13.48% / 1.0826 / -19.46%  halves 1.2085/0.9659  OOS 13.58%/1.0878
+    B136  conv S E 100 d 0.75 g 1.00  25.0bps  12.32% / 0.9994 / -19.56%  halves 1.1269/0.8813  OOS 12.44%/1.0059
+    B136  conv U E  20 d 0.25 g 1.00   0.0bps  11.17% / 1.1318 / -20.02%  halves 1.1053/1.1575  OOS 12.26%/1.2499
+    B136  conv U E  20 d 0.50 g 1.00   0.0bps  12.74% / 1.1784 / -16.50%  halves 1.2194/1.1393  OOS 13.38%/1.2411
+    B136  conv U E  20 d 0.50 g 1.00  10.0bps  11.00% / 1.0328 / -17.58%  halves 1.0654/1.0018  OOS 11.71%/1.1011
+    B136  conv U E  20 d 0.75 g 1.00   0.0bps  14.26% / 1.1696 / -19.39%  halves 1.2701/1.0766  OOS 14.44%/1.1823
+    B136  conv U E  20 d 0.75 g 1.00  10.0bps  13.08% / 1.0838 / -19.46%  halves 1.1812/0.9935  OOS 13.29%/1.0986
+    B136  conv U E  20 d 0.75 g 1.00  25.0bps  11.35% / 0.9545 / -19.56%  halves 1.0473/0.8685  OOS 11.59%/0.9726
+    B136  conv U E  50 d 0.50 g 1.00   0.0bps  12.02% / 1.0606 / -16.50%  halves 1.1309/0.9940  OOS 12.76%/1.1247
+    B136  conv U E  50 d 0.50 g 1.00  10.0bps  10.75% / 0.9598 / -16.59%  halves 1.0270/0.8960  OOS 11.53%/1.0277
+    B136  conv U E  50 d 0.75 g 1.00   0.0bps  13.89% / 1.1144 / -19.39%  halves 1.2258/1.0114  OOS 14.12%/1.1297
+    B136  conv U E  50 d 0.75 g 1.00  10.0bps  12.95% / 1.0477 / -19.46%  halves 1.1585/0.9451  OOS 13.20%/1.0642
+    B136  conv U E  50 d 0.75 g 1.00  25.0bps  11.56% / 0.9472 / -19.56%  halves 1.0572/0.8453  OOS 11.83%/0.9658
+    B136  conv U E 100 d 0.25 g 1.00   0.0bps  11.10% / 1.0181 / -19.32%  halves 1.0884/0.9500  OOS 11.94%/1.0967
+    B136  conv U E 100 d 0.50 g 1.00   0.0bps  12.67% / 1.0934 / -18.62%  halves 1.1903/1.0013  OOS 13.14%/1.1352
+    B136  conv U E 100 d 0.50 g 1.00  10.0bps  11.71% / 1.0193 / -19.84%  halves 1.1170/0.9263  OOS 12.21%/1.0633
+    B136  conv U E 100 d 0.75 g 1.00   0.0bps  14.21% / 1.1282 / -19.39%  halves 1.2515/1.0139  OOS 14.31%/1.1336
+    B136  conv U E 100 d 0.75 g 1.00  10.0bps  13.44% / 1.0734 / -19.46%  halves 1.1986/0.9572  OOS 13.53%/1.0788
+
+=== D. THE DEVICE'S OWN BILL, MEASURED NOT ASSUMED (conv S, g=0.75, 10 bps) ===
+  panel   E     d | gate% (reb)  switches | risk gross  mean SHY | turn/yr  vs CAP2 | realised vol
+  U56    20  0.00 |      46.2%       204 |      0.362     0.638 |   16.13  +12.62 |       0.0632
+  U56    20  0.25 |      41.8%       222 |      0.463     0.537 |   13.81  +10.30 |       0.0621
+  U56    20  0.50 |      36.2%       230 |      0.547     0.453 |   10.60   +7.10 |       0.0704
+  U56    20  0.75 |      32.6%       222 |      0.607     0.393 |    6.61   +3.10 |       0.0796
+  U56    20  1.00 |       0.0%         0 |      0.656     0.344 |    3.51   +0.00 |       0.0899
+  U56    50  0.00 |      50.4%       104 |      0.341     0.659 |    8.89   +5.38 |       0.0628
+  U56    50  0.25 |      39.7%       128 |      0.481     0.519 |    8.76   +5.25 |       0.0676
+  U56    50  0.50 |      31.9%       130 |      0.569     0.431 |    7.08   +3.57 |       0.0753
+  U56    50  0.75 |      28.4%       124 |      0.619     0.381 |    5.05   +1.54 |       0.0825
+  U56    50  1.00 |       0.0%         0 |      0.656     0.344 |    3.51   +0.00 |       0.0899
+  U56   100  0.00 |      51.7%        60 |      0.340     0.660 |    5.67   +2.17 |       0.0622
+  U56   100  0.25 |      32.3%        52 |      0.531     0.469 |    4.91   +1.41 |       0.0742
+  U56   100  0.50 |      29.5%        70 |      0.584     0.416 |    5.12   +1.61 |       0.0785
+  U56   100  0.75 |      25.8%        64 |      0.626     0.374 |    4.09   +0.59 |       0.0841
+  U56   100  1.00 |       0.0%         0 |      0.656     0.344 |    3.51   +0.00 |       0.0899
+  U56   200  0.00 |      46.0%        31 |      0.383     0.617 |    3.91   +0.40 |       0.0706
+  U56   200  0.25 |      25.5%        40 |      0.563     0.437 |    4.62   +1.12 |       0.0818
+  U56   200  0.50 |      21.1%        38 |      0.610     0.390 |    4.16   +0.66 |       0.0851
+  U56   200  0.75 |      18.6%        48 |      0.636     0.364 |    3.88   +0.38 |       0.0876
+  U56   200  1.00 |       0.0%         0 |      0.656     0.344 |    3.51   +0.00 |       0.0899
+  B136   20  0.00 |      44.7%       198 |      0.406     0.594 |   17.94  +13.26 |       0.0743
+  B136   20  0.25 |      39.5%       206 |      0.516     0.484 |   15.10  +10.43 |       0.0696
+  B136   20  0.50 |      35.0%       212 |      0.604     0.396 |   11.79   +7.12 |       0.0790
+  B136   20  0.75 |      32.0%       214 |      0.672     0.328 |    7.90   +3.23 |       0.0915
+  B136   20  1.00 |       0.0%         0 |      0.728     0.272 |    4.68   +0.00 |       0.1049
+  B136   50  0.00 |      53.4%       104 |      0.344     0.656 |    9.96   +5.28 |       0.0658
+  B136   50  0.25 |      41.9%       132 |      0.505     0.495 |   10.47   +5.80 |       0.0708
+  B136   50  0.50 |      31.6%       146 |      0.618     0.382 |    9.02   +4.34 |       0.0823
+  B136   50  0.75 |      27.2%       136 |      0.681     0.319 |    6.34   +1.66 |       0.0936
+  B136   50  1.00 |       0.0%         0 |      0.728     0.272 |    4.68   +0.00 |       0.1049
+  B136  100  0.00 |      54.2%        64 |      0.339     0.661 |    6.63   +1.95 |       0.0626
+  B136  100  0.25 |      37.4%        78 |      0.531     0.469 |    7.18   +2.50 |       0.0736
+  B136  100  0.50 |      27.4%        76 |      0.634     0.366 |    6.17   +1.49 |       0.0843
+  B136  100  0.75 |      23.0%        80 |      0.689     0.311 |    5.23   +0.55 |       0.0945
+  B136  100  1.00 |       0.0%         0 |      0.728     0.272 |    4.68   +0.00 |       0.1049
+  B136  200  0.00 |      53.0%        36 |      0.346     0.654 |    4.29   -0.38 |       0.0705
+  B136  200  0.25 |      30.7%        42 |      0.566     0.434 |    5.20   +0.52 |       0.0835
+  B136  200  0.50 |      21.7%        38 |      0.654     0.346 |    4.86   +0.19 |       0.0918
+  B136  200  0.75 |      18.7%        56 |      0.697     0.303 |    4.92   +0.25 |       0.0984
+  B136  200  1.00 |       0.0%         0 |      0.728     0.272 |    4.68   +0.00 |       0.1049
+
+=== E. CONVENTION S vs CONVENTION U — does the FEEDBACK matter? (10 bps, g=0.75) ===
+  U56   E  20 d 0.00:  S  5.57%/0.8898/-11.11% 4b .   U  5.96%/0.9133/-10.10% 4b .   |dSharpe| 0.0235
+  U56   E  20 d 0.25:  S  6.72%/1.0778/ -9.26% 4b .   U  7.40%/1.0986/ -9.96% 4b .   |dSharpe| 0.0208
+  U56   E  20 d 0.50:  S  8.54%/1.1992/-11.04% 4b .   U  8.84%/1.2129/-11.04% 4b .   |dSharpe| 0.0138
+  U56   E  20 d 0.75:  S 10.29%/1.2699/-12.91% 4b .   U 10.26%/1.2640/-12.91% 4b .   |dSharpe| 0.0058
+  U56   E  50 d 0.00:  S  5.18%/0.8358/-10.58% 4b .   U  6.83%/0.9276/-14.64% 4b .   |dSharpe| 0.0919
+  U56   E  50 d 0.25:  S  7.51%/1.1052/ -9.86% 4b .   U  8.05%/1.0702/-13.31% 4b .   |dSharpe| 0.0350
+  U56   E  50 d 0.50:  S  9.23%/1.2096/-11.35% 4b .   U  9.26%/1.1744/-11.98% 4b .   |dSharpe| 0.0353
+  U56   E  50 d 0.75:  S 10.61%/1.2650/-12.91% 4b .   U 10.46%/1.2394/-12.91% 4b .   |dSharpe| 0.0257
+  U56   E 100 d 0.00:  S  5.10%/0.8309/-10.56% 4b .   U  8.12%/1.0066/-16.11% 4b .   |dSharpe| 0.1757
+  U56   E 100 d 0.25:  S  9.72%/1.2878/-10.63% 4b .   U  9.01%/1.1029/-15.77% 4b .   |dSharpe| 0.1849
+  U56   E 100 d 0.50:  S  9.96%/1.2486/-11.04% 4b .   U  9.89%/1.1794/-15.44% 4b .   |dSharpe| 0.0692
+  U56   E 100 d 0.75:  S 10.81%/1.2625/-12.91% 4b Y   U 10.77%/1.2349/-15.11% 4b Y   |dSharpe| 0.0276
+  U56   E 200 d 0.00:  S  5.41%/0.7824/-14.81% 4b .   U  9.02%/1.0496/-14.81% 4b .   |dSharpe| 0.2671
+  U56   E 200 d 0.25:  S  8.98%/1.0921/-14.81% 4b .   U  9.68%/1.1178/-14.81% 4b .   |dSharpe| 0.0257
+  U56   E 200 d 0.50:  S 10.44%/1.2097/-14.81% 4b .   U 10.33%/1.1777/-14.81% 4b .   |dSharpe| 0.0320
+  U56   E 200 d 0.75:  S 11.01%/1.2365/-14.81% 4b Y   U 10.99%/1.2286/-14.81% 4b Y   |dSharpe| 0.0079
+  B136  E  20 d 0.00:  S  4.92%/0.6842/-14.06% 4b .   U  5.23%/0.7333/-23.13% 4b .   |dSharpe| 0.0491
+  B136  E  20 d 0.25:  S  7.06%/1.0154/-13.69% 4b .   U  6.92%/0.9286/-18.27% 4b .   |dSharpe| 0.0868
+  B136  E  20 d 0.50:  S  8.59%/1.0819/-14.39% 4b .   U  8.60%/1.0508/-14.51% 4b .   |dSharpe| 0.0311
+  B136  E  20 d 0.75:  S 10.21%/1.1093/-15.27% 4b .   U 10.26%/1.1084/-15.44% 4b .   |dSharpe| 0.0010
+  B136  E  50 d 0.00:  S  3.75%/0.5926/-15.31% 4b .   U  6.13%/0.7847/-15.33% 4b .   |dSharpe| 0.1921
+  B136  E  50 d 0.25:  S  6.19%/0.8840/-13.37% 4b .   U  7.59%/0.9412/-14.50% 4b .   |dSharpe| 0.0572
+  B136  E  50 d 0.50:  S  8.61%/1.0455/-14.42% 4b .   U  9.04%/1.0466/-14.73% 4b .   |dSharpe| 0.0011
+  B136  E  50 d 0.75:  S 10.16%/1.0808/-15.40% 4b .   U 10.48%/1.1030/-15.80% 4b .   |dSharpe| 0.0222
+  B136  E 100 d 0.00:  S  3.93%/0.6471/-11.69% 4b .   U  6.99%/0.8658/-16.04% 4b .   |dSharpe| 0.2187
+  B136  E 100 d 0.25:  S  7.46%/1.0150/-12.19% 4b .   U  8.24%/0.9930/-15.67% 4b .   |dSharpe| 0.0221
+  B136  E 100 d 0.50:  S  9.26%/1.0925/-13.20% 4b .   U  9.47%/1.0748/-15.40% 4b .   |dSharpe| 0.0176
+  B136  E 100 d 0.75:  S 10.63%/1.1161/-15.12% 4b Y   U 10.69%/1.1144/-15.63% 4b Y   |dSharpe| 0.0017
+  B136  E 200 d 0.00:  S  3.75%/0.5573/-17.25% 4b .   U  7.31%/0.8141/-16.66% 4b .   |dSharpe| 0.2567
+  B136  E 200 d 0.25:  S  7.95%/0.9580/-16.66% 4b .   U  8.47%/0.9239/-16.66% 4b .   |dSharpe| 0.0342
+  B136  E 200 d 0.50:  S 10.14%/1.0985/-16.66% 4b .   U  9.61%/1.0127/-16.66% 4b .   |dSharpe| 0.0858
+  B136  E 200 d 0.75:  S 10.74%/1.0869/-16.66% 4b Y   U 10.75%/1.0781/-16.66% 4b Y   |dSharpe| 0.0088
+
+=== F. RULE 8 — (E, d) chosen on <= 2016-12-31 ONLY, 2017-2026 read ONCE ===
+  U56   g0.75   0.0bps C_ISSHARPE  -> E  50 d 0.75 | OOS 12.36% / 1.4003 / -12.86% | CAP2 anchor OOS 13.17% / 1.3693 / -14.77% | live v2 OOS  9.51% / 1.2839 / -12.05% | SPY OOS 15.45% / 0.8831 / -33.72% | full 4b Y
+  U56   g0.75   0.0bps C_ISCALMAR  -> E 100 d 0.25 | OOS 11.86% / 1.4877 / -10.06% | CAP2 anchor OOS 13.17% / 1.3693 / -14.77% | live v2 OOS  9.51% / 1.2839 / -12.05% | SPY OOS 15.45% / 0.8831 / -33.72% | full 4b .
+  U56   g0.75  10.0bps C_ISSHARPE  -> E  20 d 1.00 | OOS 12.77% / 1.3318 / -14.81% | CAP2 anchor OOS 12.77% / 1.3318 / -14.81% | live v2 OOS  9.51% / 1.2839 / -12.05% | SPY OOS 15.45% / 0.8831 / -33.72% | full 4b Y
+  U56   g0.75  10.0bps C_ISCALMAR  -> E 100 d 0.25 | OOS 11.31% / 1.4234 / -10.63% | CAP2 anchor OOS 12.77% / 1.3318 / -14.81% | live v2 OOS  9.51% / 1.2839 / -12.05% | SPY OOS 15.45% / 0.8831 / -33.72% | full 4b .
+  U56   g0.75  25.0bps C_ISSHARPE  -> E  20 d 1.00 | OOS 12.18% / 1.2755 / -14.88% | CAP2 anchor OOS 12.18% / 1.2755 / -14.88% | live v2 OOS  9.51% / 1.2839 / -12.05% | SPY OOS 15.45% / 0.8831 / -33.72% | full 4b Y
+  U56   g0.75  25.0bps C_ISCALMAR  -> E 100 d 0.25 | OOS 10.47% / 1.3255 / -11.60% | CAP2 anchor OOS 12.18% / 1.2755 / -14.88% | live v2 OOS  9.51% / 1.2839 / -12.05% | SPY OOS 15.45% / 0.8831 / -33.72% | full 4b .
+  U56   g0.75  50.0bps C_ISSHARPE  -> E  20 d 1.00 | OOS 11.21% / 1.1813 / -14.99% | CAP2 anchor OOS 11.21% / 1.1813 / -14.99% | live v2 OOS  9.51% / 1.2839 / -12.05% | SPY OOS 15.45% / 0.8831 / -33.72% | full 4b .
+  U56   g0.75  50.0bps C_ISCALMAR  -> E 100 d 0.25 | OOS  9.10% / 1.1598 / -13.20% | CAP2 anchor OOS 11.21% / 1.1813 / -14.99% | live v2 OOS  9.51% / 1.2839 / -12.05% | SPY OOS 15.45% / 0.8831 / -33.72% | full 4b .
+  B136  g0.75   0.0bps C_ISSHARPE  -> E  20 d 1.00 | OOS 12.19% / 1.1392 / -16.61% | CAP2 anchor OOS 12.19% / 1.1392 / -16.61% | live v2 OOS  7.85% / 1.1017 / -12.24% | SPY OOS 15.26% / 0.8737 / -33.72% | full 4b Y
+  B136  g0.75   0.0bps C_ISCALMAR  -> E  20 d 0.75 | OOS 11.29% / 1.2099 / -14.58% | CAP2 anchor OOS 12.19% / 1.1392 / -16.61% | live v2 OOS  7.85% / 1.1017 / -12.24% | SPY OOS 15.26% / 0.8737 / -33.72% | full 4b Y
+  B136  g0.75  10.0bps C_ISSHARPE  -> E  20 d 1.00 | OOS 11.65% / 1.0936 / -17.10% | CAP2 anchor OOS 11.65% / 1.0936 / -17.10% | live v2 OOS  7.85% / 1.1017 / -12.24% | SPY OOS 15.26% / 0.8737 / -33.72% | full 4b Y
+  B136  g0.75  10.0bps C_ISCALMAR  -> E  20 d 1.00 | OOS 11.65% / 1.0936 / -17.10% | CAP2 anchor OOS 11.65% / 1.0936 / -17.10% | live v2 OOS  7.85% / 1.1017 / -12.24% | SPY OOS 15.26% / 0.8737 / -33.72% | full 4b Y
+  B136  g0.75  25.0bps C_ISSHARPE  -> E  20 d 1.00 | OOS 10.85% / 1.0250 / -17.93% | CAP2 anchor OOS 10.85% / 1.0250 / -17.93% | live v2 OOS  7.85% / 1.1017 / -12.24% | SPY OOS 15.26% / 0.8737 / -33.72% | full 4b Y
+  B136  g0.75  25.0bps C_ISCALMAR  -> E  20 d 1.00 | OOS 10.85% / 1.0250 / -17.93% | CAP2 anchor OOS 10.85% / 1.0250 / -17.93% | live v2 OOS  7.85% / 1.1017 / -12.24% | SPY OOS 15.26% / 0.8737 / -33.72% | full 4b Y
+  B136  g0.75  50.0bps C_ISSHARPE  -> E  20 d 1.00 | OOS  9.53% / 0.9106 / -19.31% | CAP2 anchor OOS  9.53% / 0.9106 / -19.31% | live v2 OOS  7.85% / 1.1017 / -12.24% | SPY OOS 15.26% / 0.8737 / -33.72% | full 4b .
+  B136  g0.75  50.0bps C_ISCALMAR  -> E  20 d 1.00 | OOS  9.53% / 0.9106 / -19.31% | CAP2 anchor OOS  9.53% / 0.9106 / -19.31% | live v2 OOS  7.85% / 1.1017 / -12.24% | SPY OOS 15.26% / 0.8737 / -33.72% | full 4b .
+
+  64 picks (2 panels x 2 conv x 2 gross x 4 rungs x 2 choosers).
+   picks landing on the CAP2 ANCHOR (d = 1.00, i.e. NO gate):  49 of 64
+   picks beating SPY's OOS Sharpe:                    64 of 64
+   picks beating the live book's OOS Sharpe:           26 of 64
+   picks beating the CAP2 ANCHOR's own OOS Sharpe:     14 of 64
+   picks with SHALLOWER OOS MaxDD than the CAP2 anchor:15 of 64
+   picks carrying a full-sample 4b pass:               38 of 64
+   pick distribution over d: 0.00:0  0.25:6  0.50:0  0.75:9  1.00:49
+   pick distribution over E: 20:56  50:3  100:5  200:0
+   U56 and B136 agree on (E, d) in 20 of 32 (conv x gross x rung x chooser) cells
+   cells where both panels agree AND both carry a full-sample 4b: 5 of 32
+
+=== GATES: 14 of 14 pass ===
+
+wrote /home/user/Claude-Space/research/backtests/2026-09-23_equity-curve-de-grossing-gate-on-the-capped-candidate_C.grid.csv / .exposure.csv / .exchange.csv / .joint.csv / .walkforward.csv / .gates.csv   (19s)
