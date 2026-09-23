@@ -9279,3 +9279,54 @@ first-order immune; `L_CAGR` is an ABSOLUTE bar and is the most contaminated rea
   SHY 42/96 vs ZERO 41/96. Gross 0.75 59/96 vs gross 1.00 24/96.
 - No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py (rule 6). The live book is
   unchanged, and so are the standing candidate's `L_DD` leg and its 3.51x turnover blocker.
+
+## 2026-09-23 — idea 2463 (lane C, run 54): the candidate family's CAGR-per-turnover FRONTIER
+- **idea 2463 put the record's eleven closed turnover devices on ONE axis for the first time.**
+  Nine of them — DRIFT (2328), PARTIAL (2391/2404), HOLD (2351), ROTA (2408), WIDTH (2467),
+  BANDW (2343/2318), AGE (2439), WHIP (2447) and the null device SCALE (2443/2457) — were
+  re-implemented inside a single engine on a single object (idea 2322's CAP2), each forced
+  through an IDENTITY rung gated bit-identical to the committed book (**0.000e+00 on all nine**).
+  38 (device, strength) points x 2 gross x 2 panels x 4 cost rungs = **608 rows, 25 of 25 gates**.
+- **THE RECORD'S EXCHANGE RATE IS REFUTED AS A TURNOVER RATE.** Pooled median pp of CAGR per 1%
+  of turnover saved: **SCALE -0.115, WHIP -0.112, WIDTH -0.195, AGE -0.064** against
+  **PARTIAL +0.005, ROTA +0.008, BANDW +0.009, DRIFT +0.020, HOLD +0.085**. The split is by
+  EXPOSURE, not by device: every device quoted near the record's `-0.10` cuts turnover by
+  HOLDING LESS (mean risk gross 0.656 -> 0.263 at SCALE@0.40, 0.080 at WIDTH@4), and every
+  device that leaves risk gross alone cuts turnover for nothing or for a gain. **The eleven
+  closed devices were each priced against a rate that belongs to de-grossing, not to trading.**
+- **IDEA 2431's ADOPTION BAR IS FREE.** The bar (3.51x -> 2.42x, -31.0%, at unchanged returns)
+  is cleared by **44 of 152 points, 30 of them at dCAGR >= 0**; on the EXPOSURE-NEUTRAL subset
+  (risk gross within +/-2% of the committed book) it is cleared by **25 of 85 points and dCAGR
+  is >= 0 in 25 of 25**. Frontier holders at the bar: U56 g0.75 ROTA@6 +1.02 pp at -43.5%,
+  B136 g0.75 BANDW@0.12 +1.45 pp at -54.9%.
+- **ONE 4b KEEP-CANDIDATE, FILED AND NOT ADOPTED: CAP2 with the 200d band widened 0.03 -> 0.08.**
+  U56 g0.75 10 bps **11.76% / 1.2168 / -17.16%**, halves 1.3087 / 1.1504, OOS **12.60% / 1.2318**,
+  turnover **2.20x (-37.4%)**; B136 **12.56% / 1.1512 / -18.08%**, OOS 12.27% / 1.1070, **2.70x
+  (-42.2%)**. 4b legs `11111` on BOTH panels at **0 / 10 / 25 and 50 bps** — the undamped
+  candidate FAILS 4b at 50 bps on both (U56 `L_CAGR`; B136 `L_H2` + `L_CAGR`). Exposure, breadth
+  and concentration are unmoved (risk gross 0.656 -> 0.659, names 37.56 -> 36.63, max weight
+  2.74% -> 2.62%). It is ONE constant in the live clause 2, not a new clause. **Recommendation:
+  do not adopt this week** — rule 8 never picks the rung (below), MaxDD gives up 2.35 pp, and
+  rule 6 reserves the change for a Sunday review.
+- **RULE 8 REFUSES THE RUNG AND EXPOSES THE SHARPE CHOOSERS.** 48 IS-only picks (<= 2016-12-31,
+  2017-2026 read once): **0 of 48 land on the undamped book**; distribution **WIDTH 31, BANDW 9,
+  DRIFT 8**, everything else 0. `C_ISSHARPE` / `C_ISCALMAR` average OOS Sharpe 1.4108 / 1.3343
+  against the undamped 1.1497 but OOS CAGR **5.10% / 4.96%** against 12.79% — they buy Sharpe by
+  shrinking the book to 4-8 names. The pre-stated adoption chooser `C_ISADOPT` reads OOS
+  **14.45% / 1.1566** against 12.79% / 1.1497: **+1.66 pp of CAGR for +0.007 of Sharpe**, 9 of 16
+  beating the undamped book. All 48 beat SPY's OOS Sharpe; 25 of 48 beat the live book's.
+- **THE ROTA HOLDER IS PART PHASE ARTEFACT AND THE RUN SAYS SO.** All 56 (panel, k, phase) rota
+  books were re-priced (gate G7): U56 ROTA@13 family **median +0.20%** against phase 0's
+  published **+0.89%** (85th percentile of its own family, spread 1.94 pp, 4b in 6 of 13 phases);
+  B136 median +1.10% vs phase 0 +1.38% (92nd pct, 4b in 1 of 13). The family median stays >= 0 at
+  every rung on both panels, so the FRONTIER claim survives the phase check while the ROTA
+  headline does not — which is why the filed candidate is the phase-free band, not the rota.
+- **CROSS-LANE REPRODUCTION, SAME DAY, INDEPENDENT ENGINES.** G2 idea 2336's CAP2 U56 headline to
+  **3.95e-05** (and its 3.51x turnover to 3.5064x); G10 lane B idea 2391's `lam = 0.40` memo on
+  BOTH panels to **3.69e-05 / 4.52e-05**; G11 lane B idea 2328's DRIFT d=0.0175 row to **1.63e-03**.
+- **A CORRECTION THE RECORD SHOULD CARRY (second lane to measure it today):** on this tape and
+  convention the LIVE book runs **2.79x/yr (U56) / 3.03x (B136)**, not the 1.77x quoted since idea
+  2322. Idea 2431's 2.42x bar is therefore BELOW the live book's own turnover, and the filed
+  candidate at 2.20x / 2.70x trades LESS than the book it would replace.
+- No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py (rule 6). The live book is
+  unchanged.
