@@ -1,3 +1,62 @@
+## 2026-09-23 — idea 2419 (lane C, run 45): IS THE CAPPED CANDIDATE'S DRAWDOWN CARRIED BY ITS MOST-EXTENDED NAMES? **ANSWERED = NO. KILL of the extended-name trim, and — via its own placebo — a POSITIVE finding: extendedness on this book is a RETURN SOURCE, not a crash hazard. NO NEW CANDIDATE, NO RULES CHANGE.**
+
+  **WHERE THIS COMES FROM.** Idea 2387 (run 40) priced the BREADTH CAP, which KEEPS the `N_max`
+  names furthest above the 200d MA and discards the rest, and killed it. Its mirror had never been
+  priced: DROP the top `f` fraction of the band's IN set by distance above the MA and hold the rest.
+  `L_DD` is the binding leg on essentially every sub-50bps 4b FAIL the candidate family has
+  published, and idea 2381 measured every cross-sectional device tried against it (inverse-vol 2362,
+  sector cap 2339, breadth cap 2387, relative cap 2381) to be a pure EXPOSURE dial. This run asked
+  whether selecting on extendedness is different.
+
+  **WHAT WAS RUN.** `w_i = min(g / D_t, cap)` on the band's IN set minus its `k_t = floor(f x N_in)`
+  most-extended names, residual to SHY at phi = 1.00. TWO DIALS: `f` {0.00, 0.05, 0.10, 0.20, 0.30}
+  and gross `g` {0.75 live, 1.00}. `f = 0.00` IS CAP2. Two conventions, both published: **R**
+  (re-spread, `D_t = N_keep`, gross preserved) and **D** (de-gross, `D_t = N_in`, trimmed weight to
+  SHY). A **RANDOM-TRIM placebo** (same `k_t`, per-name score fixed over the sample, 5 seeds) is the
+  control that separates "extendedness" from "holding fewer". Reported never selected on: panels
+  {U56, B136}, rungs {0, 10, 25, 50} bps, caps {0.02 = CAP2, INF = CAND}, band 0.03, weekly, t+1.
+  480 rows. **14 of 14 gates pass**, including `f = 0.00` bit-identical to an independent CAP2
+  construction through `engine.backtest` under BOTH conventions (max|d| 0.000e+00) and the committed
+  U56 headline reproduced to 3.95e-05.
+
+  **THE LADDER IS MONOTONE DOWNHILL.** U56 / CAP2 / conv R / g 0.75 / 10 bps, `f` 0.00 -> 0.30:
+  CAGR **11.62% -> 10.19% -> 9.44% -> 8.23% -> 7.32%**; Sharpe **1.2687 -> 1.1694 -> 1.1383 ->
+  1.1039 -> 1.1308**; OOS Sharpe 1.3318 -> 1.2361. Every `f > 0` cell fails 4b and every one fails
+  on **`L_CAGR` alone** (leg string 11110). The exchange rate — pp of CAGR surrendered per pp of
+  drawdown bought — has median **1.39** over 16 cells, i.e. WORSE than the one-for-one idea 2381
+  measured for a pure exposure dial; 3 cells made drawdown worse; Sharpe improved in **0 of 16**.
+
+  **THE PLACEBO IS THE KILL, AND IT IS SIGN-DEFINITE RATHER THAN A NULL.** Against its own
+  random-trim control at the same `k_t`, **EXT beats the random mean Sharpe in 0 of 16 cells** and is
+  the **WORST of its own 6-book bundle (rank 6 of 6) in 16 of 16** — mean rank **6.00** against a
+  chance level of 3.50. At U56 / conv R / `f = 0.30`, EXT reads 7.32% / 1.1308 against a random-trim
+  mean of 9.63% / 1.2806 (seed range 1.2164..1.3252). Dropping the most-extended names is strictly
+  worse than dropping a random subset of the same size. The convention split says it a second way:
+  conv **D** beats conv **R** at every `f` on U56 (1.1832 vs 1.1308 at `f = 0.30`), so re-concentrating
+  into the LESS extended names is itself harmful.
+
+  **IT ALSO MOVES THE ONLY STATED ADOPTION BLOCKER THE WRONG WAY.** Turnover rises monotonically in
+  `f`: U56 conv R **3.51 -> 6.35 x/yr**, B136 conv R **4.68 -> 9.69 x/yr**, against the live book's
+  1.77x. Under conv R the mean max per-name weight rises too (1.87% -> 2.06% on U56, 0.94% -> 1.24%
+  on B136) — the trim re-concentrates the exact risk CAP2 exists to cap. The 5 rows clearing 4a are
+  all at 0 bps, all fail 4b, and are simply lower-exposure books (risk gross 0.656 -> 0.463).
+
+  **RULE 8 IS THE INDEPENDENT KILL AND IT IS UNANIMOUS.** `f` fitted on <= 2016-12-31 only,
+  2017-2026 read ONCE, 128 picks: **128 of 128 land on `f = 0.00`**, 128 of 128 beat SPY's OOS Sharpe
+  (they ARE the candidate book), and **0 of 128 beat the anchor's own OOS Sharpe, 0 of 128 a
+  shallower OOS MaxDD, 0 of 128 a higher OOS CAGR**. U56 and B136 agree on `f` in **64 of 64** cells.
+
+  **FILED NOT RECOMMENDED.** Two both-panel 4b cells survive the trim (B136 / CAP2 / conv R at
+  `f` = 0.05 and 0.10, live gross) but each is strictly dominated by the incumbent on CAGR and
+  Sharpe, and `f` = 0.05 is worse on MaxDD as well (-17.45% vs -17.10%).
+
+  **LIMITS.** U56 / B136 only: the candidate family has no 4b pass on SMALL to keep or break. B136
+  is survivorship-biased current constituents (rule 9), so `L_CAGR` is the contaminated leg; the
+  trimmed-vs-untrimmed contrast is same-tape and first-order immune. Artefacts:
+  `research/backtests/2026-09-23_extended-name-trim-on-the-capped-candidate_C.py` and its
+  `.result.md`, `.grid.csv`, `.exposure.csv`, `.exchange.csv`, `.placebo.csv`, `.joint.csv`,
+  `.walkforward.csv`, `.gates.csv`, `.log.txt`. RULES.md, scan.py, bot.py and baseline.py untouched.
+
 ## 2026-09-23 — idea 2404 (lane B, run 43): DOES THE DAMPER'S MaxDD/CAGR CHANGE COME FROM LAG OR FROM UNPAID COST? **ANSWERED = BOTH, AND THE SPLIT IS CLEAN AND OPPOSITE BY METRIC. CONFIRM of run 39's CAGR attribution; the MaxDD damage is PURE LAG and cost explains NONE of it. NO NEW CANDIDATE, NO RULES CHANGE.**
 
   **WHERE THIS COMES FROM.** Idea 2391 (run 39) filed the record's first partial-adjustment damper
