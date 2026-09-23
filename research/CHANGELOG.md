@@ -1,3 +1,66 @@
+## 2026-09-23 — idea 2439 (lane cloud, run 55): DOES A BAND ENTRY-AGE FILTER CUT THE CAPPED CANDIDATE'S TURNOVER WHERE EVERY EXIT-SIDE DEVICE FAILED? **ANSWERED = NO. KILL of ADMISSION AGE as a turnover device. NO KEEP-CANDIDATE, NO RULES CHANGE. One PARKED observation: a SHORT age is a near-free risk-adjusted gain that rule 8 never selects.**
+
+  **WHAT WAS AT STAKE.** Every turnover device the record has closed — the weight-drift band
+  (2328), the minimum hold (2351), the partial-adjustment damper (2391 / 2404), the calendar
+  rota (2408), book width (2467), band width (2318 / 2343) — acts on the EXIT or the RE-SIZE.
+  AGE acts on ADMISSION and nothing else: a name may be held only once its 200d +/-3% band
+  state has been IN continuously for `a` sessions. Dials: `a` {0, 5, 10, 21, 42} and gross
+  {0.75, 1.00}. Books {CAP2 cap 0.02, CAND cap INF}, panels {U56, B136}, rungs {0,10,25,50}
+  bps, weekly, t+1, SHY sweep at phi = 1.00 are reported, never selected on. 160 rows.
+
+  **THIS RUN WAS NOT VIRGIN AND SAID SO BEFORE COMPUTE.** Idea 2463 (lane C, run 54) had
+  already re-implemented AGE as one of nine devices inside a cross-device frontier engine and
+  published a pooled -0.064 pp of CAGR per 1% of turnover saved. It never closed 2439 on its
+  own terms (no '## Done' entry, no LEADERBOARD row, no walk-forward of the age dial). The
+  claim note disclosed this, and 2463's 64 published AGE rows were used as a GATE, not a result.
+
+- **28 OF 28 GATES, INCLUDING TWO IDENTITIES AND ONE CROSS-LANE REPRODUCTION.** G1: `a = 0` is
+  bit-identical to an independently written CAP2/CAND construction through `engine.backtest`
+  on both panels and both books — max|dw| **0.000e+00**, max|dr| **0.000e+00**, 8 of 8 cells.
+  G2 reproduces the committed U56 headline (11.62% / 1.2687 / -14.81%, OOS 12.77% / 1.3318,
+  3.51x) to 3.6e-03, the known price-cache vintage residual. **G11 reproduces ALL 64 of idea
+  2463's published AGE rows to 6.661e-16** — two lanes, two independently written engines,
+  bit-identical. G10 no lookahead (0.000e+00), G12 the filter binds (0 subset violations, 0
+  short admissions), G4 peak gross 1.000000000, G5 the dial bites monotonically.
+- **THE PREMISE IS REFUTED: AGE CUTS CHURN ONLY BY HOLDING LESS, AND NEVER ENOUGH.** U56 CAP2
+  g0.75 walking a = 0 -> 5 -> 10 -> 21 -> 42: turnover **3.506 -> 3.431 -> 3.287 -> 3.015 ->
+  2.765** turns/yr (**-2.1% / -6.2% / -14.0% / -21.2%**) while mean realised RISK GROSS falls
+  **0.6561 -> 0.6481 -> 0.6387 -> 0.6182 -> 0.5810** and the blocked share (band-IN cells the
+  age filter refuses) rises 0.000 -> 0.021 -> 0.044 -> 0.092 -> 0.171. B136 reads the same
+  shape (4.675 -> 3.801, -18.7%, risk gross 0.7283 -> 0.6890). **The best turnover cut anywhere
+  in the grid is -25.55% and it costs -2.44 pp of CAGR. 0 of 32 age arms clear idea 2431's
+  adoption bar (-31.0% at dCAGR >= 0).** Pooled median exchange rate **-0.0274 pp of CAGR per
+  1% saved** — milder than 2463's -0.064 over its own strength set, and still a de-grosser's
+  rate, not a free one. The one stated adoption blocker is untouched.
+- **THE RUN'S POSITIVE FINDING, FILED AS PARK RATHER THAN KEEP.** At SHORT ages the device is
+  nearly exposure-neutral and improves risk-adjusted terms on both panels and both books.
+  U56 / CAP2 / g0.75 / 10 bps, a = 0 -> 5 -> 10: Sharpe **1.2687 -> 1.2820 -> 1.2807**, MaxDD
+  **-14.81% -> -14.23% -> -14.23%**, OOS Sharpe **1.3318 -> 1.3682 -> 1.3906**, CAGR cost only
+  -0.03 / -0.16 pp. On the UNCAPPED `CAND` book, `a = 10` improves EVERY axis at a risk-gross
+  change of 0.2% of NAV (0.7307 -> 0.7290): U56 12.59% / 1.1934 / -17.39%, OOS 13.85% / 1.2397
+  becomes **12.96% / 1.2335 / -17.72%, OOS 15.08% / 1.3411**; B136 11.99% / 1.0930 / -18.11%,
+  OOS 12.29% / 1.0994 becomes **12.14% / 1.1183 / -17.23%, OOS 12.91% / 1.1591**.
+- **AND RULE 8 REFUSES EXACTLY THAT CELL, WHICH IS WHY IT IS PARKED.** (a, g) fitted on
+  warm-up..2016-12-31 only, 2017-2026 read ONCE, 32 picks: **24 of 32 land on `a = 0`** (all 16
+  U56 picks, and all 8 B136 `C_ISCALMAR` picks) and the other **8 on `a = 42`** (every B136
+  `C_ISSHARPE` pick). **The intermediate ages 5, 10 and 21 are picked 0 of 32 times** — the
+  run's best full-sample cells are precisely the ones an out-of-sample operator would not have
+  found. Mean d(OOS Sharpe) vs the anchor +0.0052, beating it in 6 of 32; picks clear SPY's OOS
+  Sharpe 32 of 32 and the live book's 9 of 32. PROTOCOL rule 8 is explicit that a candidate
+  that only wins under a full-sample read is PARK, not KEEP, so no memo is filed.
+- **KEEP PATHS OVER ALL 160 ROWS: 4b 72, 4a 0.** U56 43/80, B136 29/80; CAP2 39/80, CAND 33/80;
+  gross 0.75 58/80 against 1.00 14/80; by age 16 / 17 / 16 / 15 / 8; by rung 23 / 23 / 21 / 5.
+  `L_DD` fails 60 of 160 (every gross-1.00 failure), `L_CAGR` 28, `L_H2` 11, `L_H1` and `L_OOS`
+  **0 of 160**. Joint both-panel 4b at 26 of 80 cells. SMALL is not priced and the reason is
+  stated: 2318 / 2322 / 2326 / 2343 each published SMALL's 4b at 0 of 40-120.
+- **SURVIVORSHIP (rule 9) is not buried:** U56 and B136 are current-constituent lists, so the
+  CAGR side of every row is flattered. The bias applies equally along the age ladder, so the
+  a-comparison is cleaner than any level in it.
+- No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py (rule 6). The live book,
+  the standing candidate's `L_DD` leg and its turnover blocker are all unchanged.
+  See LEADERBOARD.md (4 rows), `research/backtests/2026-09-23_band-entry-age-filter_cloud.py`
+  and its `.grid.csv` / `.exposure.csv` / `.bar.csv` / `.walkforward.csv` / `.gates.csv` / `.log.txt`.
+
 ## 2026-09-23 — idea 2467 (lane B, run 53): IS THE CANDIDATE'S 4b PASS A BOOK-WIDTH EFFECT, AND DOES A ONE-INSTRUMENT BAND BOOK REACH IT AT A TENTH OF THE TURNOVER? **ANSWERED = NO, TWICE OVER. KILL of BOOK WIDTH as a turnover device; CONFIRM — via the single-instrument limit — that the standing 4b candidate's whole margin is CROSS-SECTIONAL, not timing. NO KEEP-CANDIDATE, NO RULES CHANGE.**
 
   **WHERE THIS COMES FROM.** Run 51 (idea 2443) wrote the diagnosis this run is grounded in: "Idea
