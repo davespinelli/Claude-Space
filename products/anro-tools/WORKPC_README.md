@@ -7,6 +7,28 @@ Goal: give Claude enough to learn how ANRO's Monarch Foundation estimates and th
 2. **SQL Server name and database name:** in the Monarch client login or config, or ask IT: "What is the SQL Server instance and database name for Monarch?" (looks like `SERVER\INSTANCE` and `Monarch` or `MonarchDB`).
 3. **The XMPie → Monarch importer:** ask whoever maintains it: (a) where does it drop the XML files (folder path), (b) what does it call to import (Monarch XML import service, Integration Services, a stored procedure), (c) can I have TWO sample XML files it produced (one subjob import, one anything else). Copy those files to a USB/AirDrop → `products/anro/xml_samples/`.
 
+## A2. Stored procedures and structure, with nothing to install (10 minutes, read-only)
+Stored procedures are code saved inside the database. A normal table or CSV export doesn't include them. `Export-SqlDefinitions.ps1` pulls them out with only what Windows already has: PowerShell and the built-in .NET SQL client. It needs no downloads, no SSMS and no admin rights.
+1. Use any PC that can already reach the Monarch SQL Server; a PC where the Monarch client runs will do. The server name is in the Monarch login screen or config, or in Windows' ODBC Data Sources (64-bit) under the DSN Monarch uses.
+2. Copy `Export-SqlDefinitions.ps1` to that PC's Desktop (USB, email, or the GitHub "Raw" link).
+3. Open PowerShell, `cd Desktop`, then run:
+   `powershell -ExecutionPolicy Bypass -File .\Export-SqlDefinitions.ps1 -Server "SERVER\INSTANCE" -Database "Monarch"`
+   Add `-SqlLogin` if Monarch uses a SQL login rather than your Windows login.
+4. Bring the one zip it makes to the Mac → `Claude Space/products/anro/`.
+
+It exports:
+- every stored procedure, view, function and trigger as a .sql file;
+- tables, columns and row counts;
+- foreign keys;
+- which procedure touches which table;
+- SQL Agent scheduled jobs, if your login may see them.
+
+It contains no customer rows.
+
+**Permission.** Reading procedure code needs VIEW DEFINITION. If the manifest says "not visible", ask IT for `GRANT VIEW DEFINITION TO [DOMAIN\you]`. It is read-only and gives no access to data. Or IT can run the script with their own login, or use SSMS → database → Tasks → Generate Scripts → Stored Procedures, Views, Functions and Tables → Advanced: "Schema only" → one file.
+
+**Encryption.** If the manifest says "encrypted by vendor", ePS shipped those procedures locked. Their names and dependencies still show what they touch.
+
 ## B. Database discovery export (15 minutes, read-only)
 Option 1 (easiest if you have SQL Server Management Studio):
 1. Open SSMS, connect to the Monarch server (Windows authentication is usually enough for read).
