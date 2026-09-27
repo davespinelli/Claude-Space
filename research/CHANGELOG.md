@@ -10429,3 +10429,16 @@ first-order immune; `L_CAGR` is an ABSOLUTE bar and is the most contaminated rea
   is same-tape, same-names, same-days and first-order immune.
 - No change to RULES.md, PROTOCOL.md, scan.py, bot.py or baseline.py (rule 6). The live book is
   unchanged. No new KEEP candidate.
+
+## 2026-09-27 — Sunday review: rules decision — NO CHANGE, RULES v2 STANDS
+- Strongest KEEP-candidate by min(H1,H2) meeting its path's drawdown bar: idea 2435 **Candidate A** (`CAP2 + NOEQETF`,
+  g = 0.75, RESPREAD, path 4a, U56). **Re-ran `2026-09-23_etf-member-attribution_cloud.py` (12/12 gates): it
+  reproduces** on the current tape — U56 10 bps 9.25% / 1.5735 / -8.08%, halves 1.6269 / 1.5621, OOS 1.6295, turnover
+  2.44x/yr, vs live v2 on the same tape 8.63% / 1.2032 / -12.05%, OOS 1.2805. On U56 it beats live in both halves and OOS.
+- **Not promoted.** The same rule on B136 fails 4a at every cost rung: 10 bps 12.43% / 1.1821 / **-16.59%** (H2 1.0382)
+  vs live -12.24% — a universe-specific pass. Its only change vs the record's CAP2 incumbent is dropping the equity ETFs,
+  the one non-survivorship-selected tranche (PROTOCOL rule 9; the memo itself declines it on this ground), and it holds
+  ~59% SHY. A rule that flips on the broader panel and moves in the bias's direction is not adopted.
+- Next object to beat: idea 2443 `CAP2 / g = 0.40` (4a, halves 1.3510 / 1.3350, MaxDD -8.15%) — needs a B136 read first.
+- Committed output files of the re-run were restored (no content change to the record). No edit to RULES.md, baseline.py,
+  bot.py or scan.py.
