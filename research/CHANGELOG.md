@@ -10442,3 +10442,18 @@ first-order immune; `L_CAGR` is an ABSOLUTE bar and is the most contaminated rea
 - Next object to beat: idea 2443 `CAP2 / g = 0.40` (4a, halves 1.3510 / 1.3350, MaxDD -8.15%) — needs a B136 read first.
 - Committed output files of the re-run were restored (no content change to the record). No edit to RULES.md, baseline.py,
   bot.py or scan.py.
+
+## 2026-10-04 — Sunday review: rules decision — NO CHANGE, RULES v2 STANDS
+- No new LEADERBOARD rows since 2026-09-23, so the candidate shelf is the same as last week. Strongest KEEP-candidate by
+  min(H1,H2): idea 2435 A `CAP2 + NOEQETF` (4a, U56). **Re-ran it on the current tape (4717 rows, 7 more than last week):**
+  9.22% / 1.5699 / -8.08%, halves 1.6177 / 1.5625, OOS 1.6232. Live v2 on the same tape (`python research/baseline.py`):
+  8.6% / 1.198 / -12.1%, halves 1.219 / 1.183, OOS 1.2712. 11 of 12 gates pass. The one failure, G10, is a hard-coded
+  headline check that misses by 1.55e-03 only because the tape is a week longer. It reproduces on U56.
+- **Not promoted, same reason as 2026-09-27:** on B136 the same rule gets MaxDD -16.59% with H2 1.0362 and fails 4a. Its
+  gain comes from dropping equity ETFs, which is the one tranche that is NOT survivorship-selected (PROTOCOL rule 9).
+- **Next in line, re-run this week:** idea 2443 `CAP2 / g = 0.40` (min half 1.33). At 10 bps it reads U56 7.12% / 1.3304 /
+  -8.15%, halves 1.34 / 1.33, OOS 1.3946 and B136 6.95% / 1.1994 / -11.28%, halves 1.30 / 1.11. 4a holds on both panels up to
+  65 bps on U56 and 40 bps on B136. It is a clean, both-panel 4a pass. It is not the strongest, so under the mandate
+  it is not this week's pick, and it cuts CAGR by about 1.5 pp, which moves the book further from the 4b CAGR floor.
+  Raised with David as a question rather than adopted. G2/G3 headline-reproduction gates fail on tape length only (|d| ~1.5e-03).
+- Re-run output files restored. No edit to RULES.md, baseline.py, bot.py or scan.py.

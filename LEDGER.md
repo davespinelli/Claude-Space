@@ -2,11 +2,12 @@
 
 | Month | Cost (Claude Max) | Other cost | Revenue | Net | Notes |
 |---|---|---|---|---|---|
-| Sep 2026 | $200 | $0 | **$0** | -$200 | Setup month; nothing sold as of 2026-09-27 (PLAN deadline 2026-09-24 missed) |
+| Sep 2026 | $200 | $0 | **$0** | -$200 | Setup month; nothing sold (PLAN deadline 2026-09-24 missed) |
+| Oct 2026 (to 10-04) | $200 | $0 | **$0** | -$200 | Nothing sold; no channel changed state since 2026-09-27 |
 
-**Cumulative net:** -$200 · **Paper NAV:** $99,312.76 on 2026-09-26 (-0.69% since 2026-09-03; SPY +0.26% over the same dates) — `paper/nav.csv`
+**Cumulative net:** -$400 · **Paper NAV:** $98,813.00 on the row dated 2026-10-03 (-1.19% since 2026-09-03; SPY -0.15% over the same rows) — `paper/nav.csv`
 
-## Revenue pipeline as of 2026-09-27 (every number verifiable from a file in this repo)
+## Revenue pipeline as of 2026-10-04 (unchanged from 2026-09-27) (every number verifiable from a file in this repo)
 | Channel | State | Evidence |
 |---|---|---|
 | Freelance bids | **377 proposals drafted, 5 submitted, 0 won; channel dropped 2026-09-23** | `products/freelance/INDEX.md`: 372 rows read `drafted`, 5 read `submitted 2026-09-07`; `products/freelance/proposals/` holds 377 files. Nothing submitted in the 20 days since 2026-09-07; the 6-hourly Freelancer scan was stopped in commit "Freelance: stop the 6-hourly Freelancer.com job scan (channel dropped)" (2026-09-23). |
