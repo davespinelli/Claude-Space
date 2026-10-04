@@ -33,3 +33,19 @@ Written by the weekly tracker email so patterns accumulate. vs S&P = return sinc
 | 10 | NGVC | Passed 3 | +9.4% | 16 | Only new filing is the majority holders' written consent to reincorporate in Texas; nothing in our files explains the price move [8-K 5.07] |
 
 **Pattern:** Call and conviction again do not separate winners from losers: the top 10 are 8 Watch and 2 Passed at conviction 2-4, the bottom 10 are all Watch, mostly conviction 3, and retail apparel and data-processing names sit on both lists. Timing matters less than last week: all ten laggards were still reviewed Sep 4-7 as small caps fell, but four of the top 10 (VSTS, CPRI, KE, RPD) came from those same dates. As last week, several winners were notes on stocks already near highs after big runs (VNCE, VSTS, AZTA), laggards were mostly deep drawdowns that deepened, and new filings explain little: one results filing (IBEX) in the top 10 and one (ZUMZ) in the bottom 10. Six of last week's top 10 are still there, so the winners are persisting rather than rotating.
+
+## 2026-10-04 (prices 2026-10-03)
+| # | Ticker | Call | vs S&P | Days | Why |
+|---|---|---|---|---|---|
+| 1 | VNCE | Watch 2 | +31.6% | 17 | No new filing; the move matches the note's thesis of a real direct-to-consumer turn, comps up 18.4% with raised FY2026 guidance [note] |
+| 2 | EGHT | Watch 3 | +29.6% | 21 | No new filing; nothing in our files explains the rise. The note's upside needs a term-loan refinancing, still unsigned [no filing since review] |
+| 3 | IBEX | Watch 3 | +19.5% | 23 | FY2026 annual report on Sep 10 showed revenue up 15.4% to a record $644.1M; a credit line was also extended to 2029 [10-K, 8-K 1.01] |
+| 4 | ADMA | Watch 3 | +13.7% | 16 | No new filing; the move matches the note's thesis that ASCENIV grew 23.5% and lifted gross margin to 69.4% [note] |
+| 5 | EFOR | Watch 2 | +13.7% | 27 | No new filing; nothing in our files explains this week's 12% jump. The note's next event is Q3 results in late October [no filing since review] |
+| 6 | RGR | Watch 3 | +13.6% | 26 | Ruger ended its poison pill early on Sep 16 after Beretta's cooperation agreement cleared regulators; note saw a Beretta deal as bull case [8-K 1.01] |
+| 7 | TCI | Passed 4 | +13.3% | 20 | Nothing in our files explains it; the note's only route to value is a squeeze-out by the 86% controller, none announced [no filing since review] |
+| 8 | KE | Watch 3 | +13.1% | 26 | Only new filing is the proxy, proposing a name change to Kimball Solutions; the note's thesis is medical growth plus the Helvoet deal [DEF 14A] |
+| 9 | NGVC | Passed 3 | +11.7% | 23 | Only new filing is the majority holders' written consent to reincorporate in Texas; nothing in our files explains the price move [8-K 5.07] |
+| 10 | AZTA | Watch 2 | +11.4% | 23 | Only new filing sets the interim CEO's pay, a $600,000 salary plus $1.2M of stock units; nothing in our files explains the move [8-K 5.02] |
+
+**Pattern:** Call and conviction still do not separate winners from losers: the top 10 are 8 Watch and 2 Passed at conviction 2-4, while the bottom 10 are all Watch, nearly all conviction 3, and data-processing and retail apparel names sit on both lists. Winners again tend to be notes on improving businesses the desk judged fairly priced (RGR, NGVC, ADMA, IBEX), while laggards are mostly levered or deep-drawdown turnarounds (JACK, HLLY, VRRM, CLVT) that kept falling. Filings explain little: only IBEX (annual results) and RGR (pill ended under the Beretta pact) have a filing that plausibly explains the move, against several bottom-10 filings. This matches the last two weeks, and seven of last week's top 10 remain, so the winners keep persisting rather than rotating.
