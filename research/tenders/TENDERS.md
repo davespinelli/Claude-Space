@@ -1,19 +1,19 @@
 # Tender offers with odd-lot priority
 
-_Generated 2026-10-06 · EDGAR form indexes, last 45 days · 167 tender filings → 129 distinct offers, of which 16 are common-stock self-tenders · 8 carry odd-lot priority (5 in common stock)._
+_Generated 2026-10-07 · EDGAR form indexes, last 45 days · 171 tender filings → 129 distinct offers, of which 16 are common-stock self-tenders · 8 carry odd-lot priority (5 in common stock)._
 
 ## Live share tenders
 
 | Ticker | Company | Type | Offer price / range | Current | Premium lo/hi | 99-sh profit lo/hi | Expires | Days | Odd-lot | Flags | Filing |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| UTMD | UTAH MEDICAL PRODUCTS INC | Fixed price | $75.00 | $73.31 | +2.3% | $167 | 2026-10-07 | 1 | yes | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/706698/000109690626001428/0001096906-26-001428-index.htm) |
-| HERZ | Herzfeld Credit Income Fund, Inc | Fixed price | $19.13 | $15.11 | +26.6% | $398 | 2026-10-15 | 9 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/880406/000165495426008429/0001654954-26-008429-index.htm) |
-| XFLT | XAI Floating Rate & Alternative Income | Fixed price | $0.2500 | $19.30 | -98.7% | $-1,886 | 2026-10-19 | 13 | no | price parse suspect — verify against the filing | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1703079/000121390026101507/0001213900-26-101507-index.htm) |
-| PGIM | PGIM Private Credit Fund | Fixed price | $24.78 | n/a | n/a | n/a | 2026-10-28 | 22 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1923622/000192362226000017/0001923622-26-000017-index.htm) |
-| PMM | FRANKLIN MANAGED MUNICIPAL INCOME TRUS | not found | not found | $5.47 | n/a | n/a | 2026-10-29 | 23 | no | offer price not parsed | [SC TO-I](https://www.sec.gov/Archives/edgar/data/844790/000119312526410671/0001193125-26-410671-index.htm) |
-| PMO | FRANKLIN MUNICIPAL OPPORTUNITIES TRUST | not found | not found | $9.07 | n/a | n/a | 2026-10-29 | 23 | no | offer price not parsed | [SC TO-I](https://www.sec.gov/Archives/edgar/data/900422/000119312526410675/0001193125-26-410675-index.htm) |
-| PRIF-PD | Priority Income Fund, Inc. | Fixed price | $3.15 | $24.55 | -87.2% | $-2,119 | 2026-10-30 | 24 | yes | price parse suspect — verify against the filing | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1554625/000155462526000027/0001554625-26-000027-index.htm) |
-| MDT | Medtronic plc | not found | not found | $87.97 | n/a | n/a | not found | — | no | offer price not parsed | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1613103/000162828026061683/0001628280-26-061683-index.htm) |
+| HERZ | Herzfeld Credit Income Fund, Inc | Fixed price | $19.13 | $14.97 | +27.8% | $412 | 2026-10-15 | 8 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/880406/000165495426008429/0001654954-26-008429-index.htm) |
+| XFLT | XAI Floating Rate & Alternative Income | Fixed price | $0.2500 | $19.13 | -98.7% | $-1,869 | 2026-10-19 | 12 | no | price parse suspect — verify against the filing | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1703079/000121390026101507/0001213900-26-101507-index.htm) |
+| UTMD | UTAH MEDICAL PRODUCTS INC | Fixed price | $75.00 | $73.83 | +1.6% | $116 | 2026-10-27 | 20 | yes | expiration extended by amendment | [SC TO-I](https://www.sec.gov/Archives/edgar/data/706698/000109690626001428/0001096906-26-001428-index.htm) |
+| PGIM | PGIM Private Credit Fund | Fixed price | $24.78 | n/a | n/a | n/a | 2026-10-28 | 21 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1923622/000192362226000017/0001923622-26-000017-index.htm) |
+| PMM | FRANKLIN MANAGED MUNICIPAL INCOME TRUS | not found | not found | $5.60 | n/a | n/a | 2026-10-29 | 22 | no | offer price not parsed | [SC TO-I](https://www.sec.gov/Archives/edgar/data/844790/000119312526410671/0001193125-26-410671-index.htm) |
+| PMO | FRANKLIN MUNICIPAL OPPORTUNITIES TRUST | not found | not found | $9.30 | n/a | n/a | 2026-10-29 | 22 | no | offer price not parsed | [SC TO-I](https://www.sec.gov/Archives/edgar/data/900422/000119312526410675/0001193125-26-410675-index.htm) |
+| PRIF-PD | Priority Income Fund, Inc. | Fixed price | $3.15 | $24.58 | -87.2% | $-2,122 | 2026-10-30 | 23 | yes | price parse suspect — verify against the filing | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1554625/000155462526000027/0001554625-26-000027-index.htm) |
+| MDT | Medtronic plc | not found | not found | $87.09 | n/a | n/a | not found | — | no | offer price not parsed | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1613103/000162828026061683/0001628280-26-061683-index.htm) |
 
 ### Odd-lot language, quoted
 
@@ -45,7 +45,6 @@ Option/warrant exchanges, closed-end fund and BDC repurchases at net asset value
 | — | Stellus Private Credit BDC | fund/BDC repurchase (NAV) | $15.25 | 2026-08-28 | no | expired | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1901037/000110465926104224/0001104659-26-104224-index.htm) |
 | — | First Eagle Private Credit Fund | fund/BDC repurchase (NAV) | not found | 2026-08-31 | no | expired; final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1890107/000119312526383198/0001193125-26-383198-index.htm) |
 | — | Monroe Capital Income Plus Corp | share tender | $9.77 | 2026-08-31 | no | no listed ticker (non-traded?); expired | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1742313/000174231326000055/0001742313-26-000055-index.htm) |
-| SQFT | Presidio Property Trust, Inc. | debt / preferred tender | not found | 2026-09-02 | no | expired | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1080657/000149315226041169/0001493152-26-041169-index.htm) |
 | RXST | RxSight, Inc. | option exchange | not found | 2026-09-04 | no | expired | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1111485/000119312526385375/0001193125-26-385375-index.htm) |
 | LNC | LINCOLN NATIONAL CORP | debt / preferred tender | not found | 2026-09-08 | no | expired | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/59558/000119312526385942/0001193125-26-385942-index.htm) |
 | — | Antares Private Credit Fund | fund/BDC repurchase (NAV) | not found | 2026-09-11 | no | expired | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1976336/000110465926110700/0001104659-26-110700-index.htm) |
@@ -89,6 +88,7 @@ Option/warrant exchanges, closed-end fund and BDC repurchases at net asset value
 | — | Kennedy Lewis Capital Co | fund/BDC repurchase (NAV) | not found | 2026-09-30 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1911321/000114036126034910/0001140361-26-034910-index.htm) |
 | — | Oxford Park Income Fund, Inc. | debt / preferred tender | not found | 2026-09-30 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1959353/000121390026095979/0001213900-26-095979-index.htm) |
 | — | LGAM Private Credit LLC | fund/BDC repurchase (NAV) | not found | 2026-10-01 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1983514/000119312526378470/0001193125-26-378470-index.htm) |
+| SQFT | Presidio Property Trust, Inc. | debt / preferred tender | not found | 2026-10-02 | no | expired | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1080657/000149315226045707/0001493152-26-045707-index.htm) |
 | — | VINEBROOK HOMES TRUST, INC. | share tender | $33.00 | 2026-10-05 | no | no listed ticker (non-traded?); expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1755755/000143774926029656/0001437749-26-029656-index.htm) |
 | NFJ | Virtus Dividend, Interest & Premium St | listed fund tender | $15.67 | 2026-10-05 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1260563/000119312526377910/0001193125-26-377910-index.htm) |
 | — | Alternative Investment Partners Absolu | fund/BDC repurchase (NAV) | not found | 2026-10-07 | no | final amendment (results) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1327228/000119312526373174/0001193125-26-373174-index.htm) |
