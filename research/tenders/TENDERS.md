@@ -1,19 +1,19 @@
 # Tender offers with odd-lot priority
 
-_Generated 2026-10-09 · EDGAR form indexes, last 45 days · 176 tender filings → 132 distinct offers, of which 16 are common-stock self-tenders · 7 carry odd-lot priority (4 in common stock)._
+_Generated 2026-10-10 · EDGAR form indexes, last 45 days · 178 tender filings → 133 distinct offers, of which 16 are common-stock self-tenders · 7 carry odd-lot priority (4 in common stock)._
 
 ## Live share tenders
 
 | Ticker | Company | Type | Offer price / range | Current | Premium lo/hi | 99-sh profit lo/hi | Expires | Days | Odd-lot | Flags | Filing |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| HERZ | Herzfeld Credit Income Fund, Inc | Fixed price | $19.13 | $14.85 | +28.8% | $424 | 2026-10-15 | 6 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/880406/000165495426008429/0001654954-26-008429-index.htm) |
-| XFLT | XAI Floating Rate & Alternative Income | Fixed price | $0.2500 | $18.99 | -98.7% | $-1,855 | 2026-10-19 | 10 | no | price parse suspect — verify against the filing | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1703079/000121390026101507/0001213900-26-101507-index.htm) |
-| UTMD | UTAH MEDICAL PRODUCTS INC | Fixed price | $75.00 | $73.45 | +2.1% | $153 | 2026-10-27 | 18 | yes | expiration extended by amendment | [SC TO-I](https://www.sec.gov/Archives/edgar/data/706698/000109690626001428/0001096906-26-001428-index.htm) |
-| PGIM | PGIM Private Credit Fund | Fixed price | $24.78 | n/a | n/a | n/a | 2026-10-28 | 19 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1923622/000192362226000017/0001923622-26-000017-index.htm) |
-| PMM | FRANKLIN MANAGED MUNICIPAL INCOME TRUS | not found | not found | $5.63 | n/a | n/a | 2026-10-29 | 20 | no | offer price not parsed | [SC TO-I](https://www.sec.gov/Archives/edgar/data/844790/000119312526410671/0001193125-26-410671-index.htm) |
-| PMO | FRANKLIN MUNICIPAL OPPORTUNITIES TRUST | not found | not found | $9.33 | n/a | n/a | 2026-10-29 | 20 | no | offer price not parsed | [SC TO-I](https://www.sec.gov/Archives/edgar/data/900422/000119312526410675/0001193125-26-410675-index.htm) |
-| PRIF-PD | Priority Income Fund, Inc. | Fixed price | $3.15 | $24.55 | -87.2% | $-2,119 | 2026-10-30 | 21 | yes | price parse suspect — verify against the filing | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1554625/000155462526000027/0001554625-26-000027-index.htm) |
-| MDT | Medtronic plc | not found | not found | $85.51 | n/a | n/a | not found | — | no | offer price not parsed | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1613103/000162828026061683/0001628280-26-061683-index.htm) |
+| HERZ | Herzfeld Credit Income Fund, Inc | Fixed price | $19.13 | $14.77 | +29.5% | $432 | 2026-10-15 | 5 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/880406/000165495426008429/0001654954-26-008429-index.htm) |
+| XFLT | XAI Floating Rate & Alternative Income | Fixed price | $0.2500 | $18.94 | -98.7% | $-1,850 | 2026-10-19 | 9 | no | price parse suspect — verify against the filing | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1703079/000121390026101507/0001213900-26-101507-index.htm) |
+| UTMD | UTAH MEDICAL PRODUCTS INC | Fixed price | $75.00 | $73.88 | +1.5% | $111 | 2026-10-27 | 17 | yes | expiration extended by amendment | [SC TO-I](https://www.sec.gov/Archives/edgar/data/706698/000109690626001428/0001096906-26-001428-index.htm) |
+| PGIM | PGIM Private Credit Fund | Fixed price | $24.78 | n/a | n/a | n/a | 2026-10-28 | 18 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1923622/000192362226000017/0001923622-26-000017-index.htm) |
+| PMM | FRANKLIN MANAGED MUNICIPAL INCOME TRUS | not found | not found | $5.83 | n/a | n/a | 2026-10-29 | 19 | no | offer price not parsed | [SC TO-I](https://www.sec.gov/Archives/edgar/data/844790/000119312526410671/0001193125-26-410671-index.htm) |
+| PMO | FRANKLIN MUNICIPAL OPPORTUNITIES TRUST | not found | not found | $9.42 | n/a | n/a | 2026-10-29 | 19 | no | offer price not parsed | [SC TO-I](https://www.sec.gov/Archives/edgar/data/900422/000119312526410675/0001193125-26-410675-index.htm) |
+| PRIF-PD | Priority Income Fund, Inc. | Fixed price | $3.15 | $24.60 | -87.2% | $-2,124 | 2026-10-30 | 20 | yes | price parse suspect — verify against the filing | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1554625/000155462526000027/0001554625-26-000027-index.htm) |
+| MDT | Medtronic plc | not found | not found | $87.75 | n/a | n/a | not found | — | no | offer price not parsed | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1613103/000162828026061683/0001628280-26-061683-index.htm) |
 
 ### Odd-lot language, quoted
 
@@ -54,7 +54,6 @@ Option/warrant exchanges, closed-end fund and BDC repurchases at net asset value
 | — | ARES STRATEGIC INCOME FUND | fund/BDC repurchase (NAV) | $26.74 | 2026-09-18 | yes | expired; final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1918712/000110465926110962/0001104659-26-110962-index.htm) |
 | — | Ares Core Infrastructure Fund | fund/BDC repurchase (NAV) | $24.78 | 2026-09-18 | no | expired; final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/2031750/000110465926110967/0001104659-26-110967-index.htm) |
 | — | John Hancock Comvest Private Income Fu | fund/BDC repurchase (NAV) | not found | 2026-09-18 | no | expired; final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1987221/000119312526398732/0001193125-26-398732-index.htm) |
-| — | Goldman Sachs Private Credit Corp. | fund/BDC repurchase (NAV) | not found | 2026-09-22 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1920145/000119312526365299/0001193125-26-365299-index.htm) |
 | — | NexPoint Capital, Inc. | fund/BDC repurchase (NAV) | not found | 2026-09-22 | no | expired | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1588272/000119312526405214/0001193125-26-405214-index.htm) |
 | — | Brookfield Infrastructure Income Fund  | fund/BDC repurchase (NAV) | not found | 2026-09-24 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1955857/000121390026093785/0001213900-26-093785-index.htm) |
 | — | Crescent Private Credit Income Corp | fund/BDC repurchase (NAV) | not found | 2026-09-24 | yes | expired; final amendment (results) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1954360/000119312526368756/0001193125-26-368756-index.htm) |
@@ -139,13 +138,15 @@ Option/warrant exchanges, closed-end fund and BDC repurchases at net asset value
 | — | Bow River Capital Evergreen Fund | fund/BDC repurchase (NAV) | not found | not found | no | final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1810256/000121390026102567/0001213900-26-102567-index.htm) |
 | — | Felicitas Private Markets Fund | fund/BDC repurchase (NAV) | not found | not found | no | final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1957121/000121390026107032/0001213900-26-107032-index.htm) |
 | — | Fidelity Private Credit Fund | fund/BDC repurchase (NAV) | not found | not found | no | — | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1920453/000119312526384555/0001193125-26-384555-index.htm) |
-| — | Hamilton Lane Private Assets Fund | fund/BDC repurchase (NAV) | not found | not found | no | final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1803491/000121390026100003/0001213900-26-100003-index.htm) |
+| — | Goldman Sachs Private Credit Corp. | fund/BDC repurchase (NAV) | not found | not found | no | — | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1920145/000119312526407832/0001193125-26-407832-index.htm) |
+| — | Hamilton Lane Private Assets Fund | fund/BDC repurchase (NAV) | not found | not found | no | final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1803491/000121390026107854/0001213900-26-107854-index.htm) |
 | — | Hamilton Lane Private Secondary Fund | fund/BDC repurchase (NAV) | not found | not found | no | final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/2041398/000121390026100000/0001213900-26-100000-index.htm) |
 | — | Hamilton Lane Venture Capital & Growth | fund/BDC repurchase (NAV) | not found | not found | no | final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/2047692/000121390026099998/0001213900-26-099998-index.htm) |
 | — | New Mountain Private Credit Fund | fund/BDC repurchase (NAV) | not found | not found | no | — | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/2037804/000158064226006079/0001580642-26-006079-index.htm) |
 | — | North Haven Private Income Fund A LLC | fund/BDC repurchase (NAV) | not found | not found | no | — | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1973476/000119312526395623/0001193125-26-395623-index.htm) |
 | — | North Haven Private Income Fund LLC | fund/BDC repurchase (NAV) | not found | not found | no | — | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1851322/000119312526395654/0001193125-26-395654-index.htm) |
 | — | PARTNERS GROUP NEXT GENERATION INFRAST | fund/BDC repurchase (NAV) | not found | not found | no | final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1989393/000139834426015612/0001398344-26-015612-index.htm) |
+| PCRX | Pacira BioSciences, Inc. | pre-commencement (SC TO-C) | not found | not found | no | — | [SC TO-C](https://www.sec.gov/Archives/edgar/data/1396814/000114036126039148/0001140361-26-039148-index.htm) |
 | — | Partners Group Growth, LLC | fund/BDC repurchase (NAV) | not found | not found | no | final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1991706/000139834426015609/0001398344-26-015609-index.htm) |
 | — | SKYBRIDGE OPPORTUNITY FUND | fund/BDC repurchase (NAV) | not found | not found | no | — | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1181848/000119312526396639/0001193125-26-396639-index.htm) |
 | SSTI | SOUNDTHINKING, INC. | pre-commencement (SC TO-C) | not found | not found | no | — | [SC TO-C](https://www.sec.gov/Archives/edgar/data/1351636/000114036126037933/0001140361-26-037933-index.htm) |
