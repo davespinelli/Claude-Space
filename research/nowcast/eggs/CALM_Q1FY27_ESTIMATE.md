@@ -292,18 +292,121 @@ Downloads are cached in cache/, which git ignores.
 
 Scoring is against the frozen numbers above.
 
-| Item | Our estimate | Consensus | Actual | Our error | Consensus error |
-|---|---|---|---|---|---|
-| Net sales ($M) | 538.6 (509-572) | 578.5 | | | |
-| Diluted EPS ($) | -0.85 (-1.27 to -0.59) | -0.71 | | | |
-| Operating income ($M) | -59.7 | n/a | | | |
-| Conventional segment, average price change vs Q1 FY26 | about -61% ($0.99 vs $2.54 on the old basis) | n/a | | | |
-| Conventional segment, volume change vs Q1 FY26 | +3.1% | n/a | | | |
-| Specialty segment, average price change vs Q1 FY26 | about -12% | n/a | | | |
-| Specialty segment, volume change vs Q1 FY26 | about -3% | n/a | | | |
+Scored 2026-10-11 from Cal-Maine's earnings release of 2026-09-30. The scoring scheduled for 2026-09-30 did not run. Every figure below comes from filings or data published on or before 2026-09-30, except the stock prices.
 
-- Was the revenue call right (miss)?
-- Was the EPS call right (lean miss)?
-- Were the actual results inside our ranges?
-- What drove the error: price, volume, cost or one-off items?
-- Stock reaction, close on 2026-09-29 to close on 2026-09-30 (reported for the record only; not a test):
+### The answer
+
+- **Revenue: our call was right, and the number was almost exact.**
+  - Cal-Maine reported net sales of **$539.6M**. We said $538.6M (range $509M to $572M).
+  - Consensus was **$561.6M on report day**. It was $578.5M when we froze.
+  - The result was inside our range, near the middle.
+  - Our "miss" call was right: revenue came in below both consensus figures.
+- **EPS: the direction was right, but the loss was much bigger than we said.**
+  - Diluted EPS was **-$1.26**. We said -$0.85 (range -$1.27 to -$0.59).
+  - Consensus was **-$0.77 on report day**. It was -$0.71 when we froze.
+  - The result was inside our range, but only by one cent at the bottom.
+  - Our "lean miss" call was right. We were $0.41 too optimistic. Consensus was $0.49 too optimistic, or $0.55 on the frozen figure.
+- **Price input: close, but slightly too low.**
+  - Cal-Maine says its conventional price per dozen fell 59.3% from a year earlier. Applied to the year-ago $2.54, that is about **$1.03 a dozen**.
+  - Our implied price was $0.99, about 4 cents (4%) too low.
+  - The release and 10-Q give no price per dozen or dozens sold, only percentage changes.
+- **Error source:**
+  - On revenue, our price and volume errors cancelled out, and shell eggs lost about what we expected at the gross level.
+  - The miss came from costs outside the egg price. Overheads (SG&A) came in $13M above our seasonal-low assumption. Egg products and prepared foods made about $9M less gross profit than the 20% margin we assumed.
+- **Stock reaction (for the record only; not a test):**
+  - CALM closed at $68.55 on 2026-09-29 and $68.06 on 2026-09-30, down 0.7%. The S&P 500 fell 0.3% that day.
+  - The stock opened 7.4% lower, at $63.50, and recovered during the day.
+  - Source: Yahoo Finance via yfinance, read 2026-10-11.
+- **Caveat:** this is one company and one quarter. It shows how the method works; it proves nothing about whether the method works in general.
+
+### Scoring table
+
+Errors are our figure minus the actual. A plus sign means too high for revenue and operating income, and too optimistic for EPS.
+
+| Item | Our estimate | Consensus (frozen / report day) | Actual | Our error | Consensus error (frozen / report day) |
+|---|---|---|---|---|---|
+| Net sales ($M) | 538.6 (509-572) | 578.5 / 561.6 | **539.6** | **-1.0 (-0.2%)** | +38.9 (+7.2%) / +22.0 (+4.1%) |
+| Diluted EPS ($) | -0.85 (-1.27 to -0.59) | -0.71 / -0.77 | **-1.26** | **+0.41** | +0.55 / +0.49 |
+| Operating income ($M) | -59.7 | n/a | -82.2 | +22.5 | n/a |
+| Conventional segment, average price change vs Q1 FY26 | about -61% ($0.99 vs $2.54 on the old basis) | n/a | -59.3% (about $1.03 on the old basis) | about -1.6 points (-4 cents) | n/a |
+| Conventional segment, volume change vs Q1 FY26 | +3.1% | n/a | -0.7% | +3.8 points | n/a |
+| Specialty segment, average price change vs Q1 FY26 | about -12% (-11.6%) | n/a | -10.7% | -0.9 points | n/a |
+| Specialty segment, volume change vs Q1 FY26 | about -3% (-3.3%) | n/a | -3.8% | +0.5 points | n/a |
+
+### Details
+
+**What Cal-Maine reported** for the 13 weeks to 2026-08-29:
+- Net sales were $539.6M and gross profit $0.4M.
+- The operating loss was $82.2M. Net loss attributable to Cal-Maine was $58.6M, or -$1.26 a diluted share on 46.70M shares.
+- Segment results:
+  - Conventional shell eggs: -$71.0M.
+  - Specialty shell eggs: +$14.9M.
+  - Prepared foods: +$7.8M.
+  - Other (mainly egg products): -$8.4M.
+  - Unallocated corporate SG&A: -$24.6M.
+  - Loss on disposal of fixed assets: -$0.9M.
+
+**Price and dozens, implied.** These figures are worked out from the reported percentage changes and the year-ago figures on the old basis. They are not reported directly.
+
+| | Our estimate | Implied actual |
+|---|---|---|
+| Conventional price, $/dozen | 0.99 | about 1.03 (1.02 using segment net sales) |
+| Conventional dozens (M) | 205.5 | about 197.9 |
+| Specialty price, $/dozen | 2.12 | about 2.14 |
+| Specialty dozens (M) | 114.4 | about 113.8 |
+| All shell eggs, $/dozen | 1.39 | about 1.44 |
+| All shell-egg dozens (M) | 319.9 | about 311.7 |
+
+**Revenue: why it came out right.** We were $1.0M low in total. The pieces were bigger and mostly cancelled:
+- Conventional price higher than ours: +$8.1M.
+- Conventional volume lower than ours: -$7.5M.
+- Specialty price higher than ours: +$2.5M.
+- Specialty volume lower than ours: -$1.3M.
+- Egg products, prepared foods and other: -$0.7M.
+
+Part of the accuracy was luck: two errors of about $8M each, in opposite directions.
+
+**EPS: from our -$0.85 to the actual -$1.26.** Each step is after tax at our 22.6% rate.
+- **SG&A: -$0.22.**
+  - SG&A was $81.7M against our $68.5M.
+  - Unallocated corporate SG&A rose 53% from a year earlier, on insurance and on legal and professional fees.
+  - Fuel-driven delivery costs and the Creighton farms added to segment SG&A.
+  - Caveat 5 flagged this risk at $75M. It went higher.
+- **Cost of sales: -$0.16.**
+  - Cost of sales was $539.2M against our $529.7M.
+  - Shell eggs had a gross loss of about $9.5M, against about $9.6M in our model, so that part was on target.
+  - The gap was in egg products and prepared foods. They made about $9.9M of gross profit; our 20% margin assumption implied $18.5M.
+  - Egg-product prices fell 65%, so that business sold below cost. Prepared-foods volume fell 19% during capacity work.
+- **Smaller items: -$0.03 net.**
+  - Minority interest: -$0.03. Its share of profit, mainly from the Crepini joint venture, was $2.4M against our $0.8M.
+  - Other income: -$0.02.
+  - Loss on disposal of fixed assets: -$0.02.
+  - Revenue: +$0.02.
+  - A higher tax rate on the loss (24.2% against our 22.6%): +$0.03.
+  - Slightly fewer shares (46.70M against our 46.85M): under $0.01.
+- **One-off items:** none of any size. There was no settlement charge, write-down or insurance gain in the quarter.
+
+**Other observations:**
+- **Caveat 2 held.** The model was too optimistic in a trough quarter again: by $0.41 this time and $0.54 last quarter.
+- **The segment-by-segment check in section 1 came closer on EPS.** It said -$0.96, which was $0.30 too optimistic.
+- **Consensus moved towards our number before the report.**
+  - In the week after we froze, revenue consensus fell from $578.5M to $561.6M and EPS consensus from -$0.71 to -$0.77.
+  - Our lead over the report-day consensus was therefore smaller than over the frozen one.
+  - Alphastreet counts only two analysts, so "consensus" here is thin.
+
+### Sources for the result
+
+- **Earnings release** (8-K, EX-99.1, filed 2026-09-30): https://www.sec.gov/Archives/edgar/data/16160/000156276226000111/exhibit991.htm
+- **Q1 FY27 10-Q** (filed 2026-09-30), used for segment costs, the SG&A reasons, the tax rate and minority interest: https://www.sec.gov/Archives/edgar/data/16160/000156276226000113/calm-20260829.htm
+- **Report-day consensus:**
+
+| Source | EPS | Revenue ($M) | Note |
+|---|---|---|---|
+| StockStory, 2026-09-30 | -0.77 | 561.7 | [link](https://www.financialcontent.com/article/stockstory-2026-9-30-cal-maine-nasdaqcalm-reports-sales-below-analyst-estimates-in-q3-cy2026-earnings-stock-drops) |
+| MarketBeat-syndicated report, 2026-09-30 | -0.77 | 561.57 | [link](https://www.thecerbatgem.com/2026/09/30/cal-maine-foods-nasdaqcalm-issues-earnings-results.html) |
+| Alphastreet preview | -0.76 | 561.6 | 2 analysts; EPS range -0.88 to -0.64, revenue range 540.0 to 609.7. From the search summary only, because the page blocked direct reading. [link](https://news.alphastreet.com/cal-maine-foods-calm-q1-2027-preview-eps-est-0-76-reports-september-30/) |
+| Investing.com | -0.47 | 587.8 | Cited after the report as the estimate missed, from the search summary; the same figures as on 2026-09-23. Still the outlier. |
+
+- **Stock prices:** Yahoo Finance daily data via yfinance (CALM and ^GSPC), read 2026-10-11.
+
+This is research to test a method. It is not investment advice.
