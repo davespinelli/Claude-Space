@@ -10457,3 +10457,14 @@ first-order immune; `L_CAGR` is an ABSOLUTE bar and is the most contaminated rea
   it is not this week's pick, and it cuts CAGR by about 1.5 pp, which moves the book further from the 4b CAGR floor.
   Raised with David as a question rather than adopted. G2/G3 headline-reproduction gates fail on tape length only (|d| ~1.5e-03).
 - Re-run output files restored. No edit to RULES.md, baseline.py, bot.py or scan.py.
+
+## 2026-10-11 — Sunday review: rules decision — NO CHANGE, RULES v2 STANDS
+- Still no new LEADERBOARD rows since 2026-09-23, so the shelf is unchanged. Strongest KEEP-candidate by min(H1,H2): idea
+  2435 A `CAP2 + NOEQETF` (4a, U56). **Re-ran `2026-09-23_etf-member-attribution_cloud.py` on the current tape (4722 rows):**
+  U56 10 bps 9.24% / 1.5742 / -8.08%, halves 1.6222 / 1.5666, OOS 1.6301. Live v2 on the same tape (`python
+  research/baseline.py`): 8.6% / 1.201 / -12.1%, halves 1.226 / 1.182. G10 (hard-coded headline) misses by 1.09e-03 on tape
+  length only; every other gate passes. It reproduces on U56.
+- **Not promoted, same reason as the last two weeks:** on B136 it reads 12.41% / 1.1824 / **-16.60%**, H2 1.0384, and fails 4a.
+  Its gain comes from dropping the equity ETFs, the one tranche that is NOT survivorship-selected (PROTOCOL rule 9).
+- Idea 2443 `CAP2 / g = 0.40` (clean both-panel 4a pass, about -1.5 pp CAGR) is still waiting on David's answer from
+  2026-10-04; not adopted without it. Re-run output files restored. No edit to RULES.md, baseline.py, bot.py or scan.py.
