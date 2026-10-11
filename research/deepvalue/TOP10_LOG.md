@@ -49,3 +49,19 @@ Written by the weekly tracker email so patterns accumulate. vs S&P = return sinc
 | 10 | AZTA | Watch 2 | +11.4% | 23 | Only new filing sets the interim CEO's pay, a $600,000 salary plus $1.2M of stock units; nothing in our files explains the move [8-K 5.02] |
 
 **Pattern:** Call and conviction still do not separate winners from losers: the top 10 are 8 Watch and 2 Passed at conviction 2-4, while the bottom 10 are all Watch, nearly all conviction 3, and data-processing and retail apparel names sit on both lists. Winners again tend to be notes on improving businesses the desk judged fairly priced (RGR, NGVC, ADMA, IBEX), while laggards are mostly levered or deep-drawdown turnarounds (JACK, HLLY, VRRM, CLVT) that kept falling. Filings explain little: only IBEX (annual results) and RGR (pill ended under the Beretta pact) have a filing that plausibly explains the move, against several bottom-10 filings. This matches the last two weeks, and seven of last week's top 10 remain, so the winners keep persisting rather than rotating.
+
+## 2026-10-11 (prices 2026-10-10)
+| # | Ticker | Call | vs S&P | Days | Why |
+|---|---|---|---|---|---|
+| 1 | VNCE | Watch 2 | +41.9% | 24 | No new filing; the move matches the note's thesis of a real direct-to-consumer turn, comps up 18.4% with raised FY2026 guidance [note] |
+| 2 | RPD | Watch 3 | +23.0% | 32 | No new filing; nothing in our files explains this week's 14% rise. The note's governance-reset thesis: JANA owns 10.1%, operating income guide lifted [note] |
+| 3 | AZTA | Watch 2 | +20.0% | 30 | Oct 7 filing set a Multiomics restructuring closing three labs, targeting about $11M of annual savings for $11-13M of charges [8-K 2.05] |
+| 4 | TCI | Passed 4 | +19.3% | 27 | Nothing in our files explains it; the note's only route to value is a squeeze-out by the 86% controller, none announced [no filing since review] |
+| 5 | IBEX | Watch 3 | +18.3% | 30 | FY2026 annual report on Sep 10 showed revenue up 15.4% to a record $644.1M; a credit line was also extended to 2029 [10-K, 8-K 1.01] |
+| 6 | ADMA | Watch 3 | +16.8% | 23 | No new filing; the move matches the note's thesis that ASCENIV grew 23.5% and lifted gross margin to 69.4% [note] |
+| 7 | EGHT | Watch 3 | +16.4% | 28 | No new filing; nothing in our files explains the rise. The note's upside needs a term-loan refinancing, still unsigned [no filing since review] |
+| 8 | EFOR | Watch 2 | +15.9% | 34 | No new filing; nothing in our files explains the move. The note's next event is Q3 results in late October [no filing since review] |
+| 9 | OPRT | Watch 3 | +14.3% | 28 | Only new filing names a new CFO, ex-Discover; otherwise the move matches the note's thesis of falling funding costs and improving delinquencies [8-K 5.02, note] |
+| 10 | KE | Watch 3 | +12.7% | 33 | Only new filing is the proxy, proposing a name change to Kimball Solutions; the note's thesis is medical growth plus the Helvoet deal [DEF 14A] |
+
+**Pattern:** Call and conviction still do not separate winners from losers: the top 10 are 9 Watch and 1 Passed at conviction 2-4, the bottom 10 are 8 Watch and 2 Passed, mostly conviction 3, and data-processing names sit on both lists. Winners remain notes on improving businesses or screen errors the desk corrected (VNCE, ADMA, IBEX, OPRT), while laggards are mostly levered or deep-drawdown turnarounds (VRRM, CLVT, TROX, SSTK) that kept falling. Filings again explain little: only IBEX's annual results plausibly explain a top-10 move, while six of the bottom 10 had new filings, none of them results. This matches the last three weeks, and eight of last week's top 10 remain, so the winners keep persisting.
