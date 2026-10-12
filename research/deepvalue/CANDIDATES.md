@@ -13,12 +13,12 @@ Free data only: SEC XBRL `frames` API for fundamentals (one request per concept 
 | 5 | operating income > -25% of revenue (not deeply loss-making) | 1,840 |
 | 6 | shares outstanding < 5B (drops mega-caps / odd units) | 1,832 |
 | 7 | operating cash flow reported (FCF computable) | 1,796 |
-| 8 | priced by yfinance (>=130 trading days) | 1,775 |
-| 9 | market cap $100M - $5B | 909 |
-| 10 | 20d avg dollar volume > $1M | 818 |
-| 11 | exclude SIC 6000-6799 (banks/insurers/REITs/holdcos): -71 | 747 |
-| 12 | exclude drug/biotech SIC with revenue < $60M: -3 | 744 |
-| 13 | scored universe | 744 |
+| 8 | priced by yfinance (>=130 trading days) | 1,776 |
+| 9 | market cap $100M - $5B | 908 |
+| 10 | 20d avg dollar volume > $1M | 821 |
+| 11 | exclude SIC 6000-6799 (banks/insurers/REITs/holdcos): -72 | 749 |
+| 12 | exclude drug/biotech SIC with revenue < $60M: -3 | 746 |
+| 13 | scored universe | 746 |
 
 ## Score formula
 
@@ -47,89 +47,89 @@ mktcap    = last close x dei:EntityCommonStockSharesOutstanding
 
 | # | Ticker | Name | Mkt cap | EV/EBIT | FCF yld | ROIC | Rev gr | NetDebt/EBIT | Share chg | 12-1 mom | ADV $ | Score |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | TOYO | TOYO Co., Ltd | $165M | 1.8 | 25.0% | 89.0% | 141.5% | -1.0 | -19.0% | -36.0% | $1M | 0.876 |
-| 2 | YELP | YELP INC | $1.01B | 5.5 | 32.1% | 22.4% | 3.7% | 0.0 | -14.0% | -33.8% | $28M | 0.844 |
-| 3 | LRN | Stride, Inc. | $3.56B | 8.9 | 12.1% | 22.0% | 17.9% | -0.9 | -4.7% | -43.8% | $56M | 0.837 |
-| 4 | ESEA | EUROSEAS LTD. | $503M | 3.6 | 28.1% | 21.5% | 7.0% | 0.2 | 0.1% | 37.5% | $3M | 0.834 |
-| 5 | NUTX | Nutex Health Inc. | $1.41B | 4.5 | 17.4% | 98.9% | 82.4% | -0.6 | 15.1% | 90.0% | $36M | 0.828 |
-| 6 | ZD | ZIFF DAVIS, INC. | $1.94B | 5.7 | 14.9% | 10.7% | 3.5% | -4.8 | -16.4% | 44.4% | $40M | 0.828 |
-| 7 | MDXG | MIMEDX GROUP, INC. | $681M | 8.8 | 10.9% | 52.6% | 20.0% | -1.9 | -1.5% | -35.2% | $5M | 0.825 |
-| 8 | STRT | STRATTEC SECURITY CORP | $254M | 5.5 | 15.3% | 16.1% | 2.5% | -4.1 | -4.2% | 2.3% | $4M | 0.824 |
-| 9 | PRDO | PERDOCEO EDUCATION Corp | $2.11B | 9.9 | 10.7% | 17.8% | 24.2% | -0.8 | -3.7% | -4.6% | $24M | 0.817 |
-| 10 | CRMD | CorMedix Inc. | $575M | 2.1 | 30.0% | 58.1% | 617.0% | -1.7 | 4.4% | -29.4% | $7M | 0.815 |
-| 11 | GPOR | GULFPORT ENERGY CORP | $2.88B | 6.3 | 27.9% | 17.3% | 48.5% | 1.5 | 0.7% | -6.1% | $49M | 0.814 |
-| 12 | GPI | GROUP 1 AUTOMOTIVE INC | $2.77B | 7.7 | 15.3% | 9.9% | 13.2% | 3.9 | -7.9% | -33.3% | $73M | 0.810 |
-| 13 | TPC | TUTOR PERINI CORP | $4.38B | 16.5 | 12.9% | 25.5% | 28.1% | -2.4 | -0.3% | 36.1% | $39M | 0.810 |
-| 14 | HRMY | Harmony Biosciences Holdings, Inc. | $2.35B | 9.3 | 14.8% | 28.2% | 21.5% | -2.0 | 1.2% | 54.7% | $41M | 0.806 |
-| 15 | DXC | DXC Technology Co | $1.98B | 3.1 | 52.3% | 18.7% | -1.8% | 1.1 | -10.7% | -17.2% | $42M | 0.806 |
-| 16 | BRBR | BELLRING BRANDS, INC. | $994M | 5.8 | 25.7% | 45.7% | 16.1% | 3.0 | -7.7% | -73.3% | $33M | 0.805 |
-| 17 | DAC | Danaos Corp | $3.09B | 5.9 | 20.9% | 10.9% | 2.8% | -0.3 | -3.8% | 84.5% | $27M | 0.803 |
-| 18 | CCSI | Consensus Cloud Solutions, Inc. | $673M | 7.5 | 15.7% | 24.2% | -0.2% | 3.0 | -3.4% | 35.9% | $5M | 0.803 |
-| 19 | CRTO | Criteo S.A. | $771M | 2.6 | 27.1% | 18.3% | 0.6% | -1.2 | -6.4% | -17.1% | $5M | 0.801 |
-| 20 | SIG | SIGNET JEWELERS LTD | $4.14B | 9.2 | 12.7% | 23.7% | 1.6% | -1.3 | -4.4% | 3.6% | $88M | 0.801 |
-| 21 | BBWI | Bath & Body Works, Inc. | $3.50B | 5.4 | 24.7% | 58.7% | -0.2% | 2.3 | -4.7% | -30.0% | $123M | 0.800 |
-| 22 | UPWK | UPWORK, INC | $1.07B | 7.4 | 22.6% | 20.6% | 2.4% | -0.9 | -5.8% | -52.9% | $21M | 0.791 |
-| 23 | SBH | Sally Beauty Holdings, Inc. | $1.49B | 6.5 | 11.6% | 17.1% | -0.4% | 2.0 | -5.4% | 1.5% | $24M | 0.791 |
-| 24 | NGVT | Ingevity Corp | $2.40B | 8.0 | 11.4% | 32.9% | -2.7% | 2.3 | -5.7% | 23.5% | $20M | 0.790 |
-| 25 | KFY | KORN FERRY | $3.64B | 8.7 | 8.9% | 18.6% | 6.4% | -1.1 | -2.0% | 13.2% | $48M | 0.789 |
-| 26 | COLL | COLLEGIUM PHARMACEUTICAL, INC | $719M | 4.6 | 45.6% | 33.7% | 23.6% | 0.6 | 3.3% | -30.8% | $19M | 0.788 |
-| 27 | SON | SONOCO PRODUCTS CO | $4.74B | 7.9 | 7.3% | 11.7% | 41.7% | 3.3 | 0.2% | 18.5% | $52M | 0.783 |
-| 28 | ABG | ASBURY AUTOMOTIVE GROUP INC | $3.01B | 7.0 | 25.8% | 9.8% | 4.7% | 3.5 | -8.7% | -15.8% | $52M | 0.782 |
-| 29 | SMPL | Simply Good Foods Co | $901M | 7.5 | 17.5% | 7.3% | 9.0% | 1.7 | -12.0% | -57.4% | $23M | 0.781 |
-| 30 | GSL | Global Ship Lease, Inc. | $1.60B | 4.3 | 32.6% | 16.6% | 7.8% | 0.6 | 1.3% | 69.5% | $14M | 0.780 |
-| 31 | PAYO | Payoneer Global Inc. | $2.42B | 16.6 | 8.5% | 32.1% | 7.7% | -2.8 | -6.0% | 15.8% | $21M | 0.778 |
-| 32 | GNTX | GENTEX CORP | $4.43B | 8.9 | 10.3% | 16.5% | 9.6% | -0.5 | -4.0% | -13.4% | $51M | 0.776 |
-| 33 | ASO | Academy Sports & Outdoors, Inc. | $3.32B | 6.9 | 6.7% | 17.0% | 2.0% | 0.4 | -6.7% | 4.2% | $83M | 0.774 |
-| 34 | LPG | DORIAN LPG LTD. | $2.47B | 11.8 | 8.5% | 13.4% | 36.3% | 0.0 | 0.3% | 116.9% | $36M | 0.773 |
-| 35 | HESM | Hess Midstream LP | $4.14B | 7.7 | 17.6% | n/a | 8.4% | 3.6 | -2.1% | 30.8% | $80M | 0.773 |
-| 36 | UPBD | UPBOUND GROUP, INC. | $898M | 3.5 | 26.6% | 28.1% | 8.7% | -0.5 | 0.7% | -9.6% | $18M | 0.773 |
-| 37 | EMBC | Embecta Corp. | $322M | 5.9 | 56.6% | 39.2% | -3.8% | 4.5 | -3.1% | -63.5% | $6M | 0.771 |
-| 38 | BLBD | Blue Bird Corp | $1.78B | 10.5 | 8.6% | 21.3% | 9.9% | -0.2 | -0.1% | 11.1% | $30M | 0.771 |
-| 39 | RIGL | RIGEL PHARMACEUTICALS INC | $917M | 7.2 | 8.3% | 24.2% | 64.1% | -0.1 | 4.1% | 64.4% | $12M | 0.771 |
-| 40 | HOG | HARLEY-DAVIDSON, INC. | $2.80B | 5.3 | 14.8% | 13.1% | -13.8% | -2.0 | -14.4% | 2.8% | $54M | 0.766 |
+| 1 | TOYO | TOYO Co., Ltd | $163M | 1.8 | 25.3% | 89.0% | 141.5% | -1.0 | -19.0% | -37.9% | $1M | 0.876 |
+| 2 | YELP | YELP INC | $1.01B | 5.5 | 32.0% | 22.4% | 3.7% | 0.0 | -14.0% | -31.8% | $28M | 0.844 |
+| 3 | LRN | Stride, Inc. | $3.51B | 8.8 | 12.3% | 22.0% | 17.9% | -0.9 | -4.7% | -43.4% | $57M | 0.839 |
+| 4 | ESEA | EUROSEAS LTD. | $502M | 3.6 | 28.1% | 21.5% | 7.0% | 0.2 | 0.1% | 38.8% | $3M | 0.836 |
+| 5 | NUTX | Nutex Health Inc. | $1.41B | 4.5 | 17.4% | 98.9% | 82.4% | -0.6 | 15.1% | 93.1% | $34M | 0.828 |
+| 6 | ZD | ZIFF DAVIS, INC. | $1.97B | 5.9 | 14.6% | 10.7% | 3.5% | -4.8 | -16.4% | 48.0% | $39M | 0.827 |
+| 7 | STRT | STRATTEC SECURITY CORP | $252M | 5.4 | 15.4% | 16.1% | 2.5% | -4.1 | -4.2% | 5.5% | $4M | 0.824 |
+| 8 | MDXG | MIMEDX GROUP, INC. | $704M | 9.1 | 10.5% | 52.6% | 20.0% | -1.9 | -1.5% | -34.0% | $5M | 0.821 |
+| 9 | PRDO | PERDOCEO EDUCATION Corp | $2.11B | 9.9 | 10.7% | 17.8% | 24.2% | -0.8 | -3.7% | -3.2% | $24M | 0.819 |
+| 10 | HRMY | Harmony Biosciences Holdings, Inc. | $2.23B | 8.7 | 15.6% | 28.2% | 21.5% | -2.0 | 1.2% | 55.0% | $41M | 0.814 |
+| 11 | CRMD | CorMedix Inc. | $581M | 2.2 | 29.7% | 58.1% | 617.0% | -1.7 | 4.4% | -28.8% | $7M | 0.814 |
+| 12 | GPOR | GULFPORT ENERGY CORP | $2.92B | 6.4 | 27.5% | 17.3% | 48.5% | 1.5 | 0.7% | -5.9% | $47M | 0.814 |
+| 13 | GPI | GROUP 1 AUTOMOTIVE INC | $2.74B | 7.7 | 15.5% | 9.9% | 13.2% | 3.9 | -7.9% | -34.1% | $72M | 0.811 |
+| 14 | TPC | TUTOR PERINI CORP | $4.39B | 16.6 | 12.9% | 25.5% | 28.1% | -2.4 | -0.3% | 44.8% | $38M | 0.811 |
+| 15 | DXC | DXC Technology Co | $2.00B | 3.1 | 51.7% | 18.7% | -1.8% | 1.1 | -10.7% | -16.1% | $43M | 0.807 |
+| 16 | BRBR | BELLRING BRANDS, INC. | $999M | 5.8 | 25.6% | 45.7% | 16.1% | 3.0 | -7.7% | -74.1% | $33M | 0.806 |
+| 17 | DAC | Danaos Corp | $3.09B | 5.9 | 20.8% | 10.9% | 2.8% | -0.3 | -3.8% | 91.0% | $28M | 0.804 |
+| 18 | CCSI | Consensus Cloud Solutions, Inc. | $677M | 7.5 | 15.6% | 24.2% | -0.2% | 3.0 | -3.4% | 38.9% | $4M | 0.804 |
+| 19 | CRTO | Criteo S.A. | $752M | 2.5 | 27.7% | 18.3% | 0.6% | -1.2 | -6.4% | -15.8% | $5M | 0.802 |
+| 20 | SIG | SIGNET JEWELERS LTD | $4.17B | 9.3 | 12.6% | 23.7% | 1.6% | -1.3 | -4.4% | 4.8% | $85M | 0.800 |
+| 21 | BBWI | Bath & Body Works, Inc. | $3.51B | 5.4 | 24.6% | 58.7% | -0.2% | 2.3 | -4.7% | -24.8% | $122M | 0.800 |
+| 22 | SBH | Sally Beauty Holdings, Inc. | $1.46B | 6.4 | 11.8% | 17.1% | -0.4% | 2.0 | -5.4% | 7.2% | $23M | 0.792 |
+| 23 | UPWK | UPWORK, INC | $1.08B | 7.4 | 22.5% | 20.6% | 2.4% | -0.9 | -5.8% | -50.0% | $21M | 0.791 |
+| 24 | NGVT | Ingevity Corp | $2.37B | 8.0 | 11.5% | 32.9% | -2.7% | 2.3 | -5.7% | 28.5% | $20M | 0.791 |
+| 25 | KFY | KORN FERRY | $3.61B | 8.6 | 9.0% | 18.6% | 6.4% | -1.1 | -2.0% | 12.8% | $46M | 0.790 |
+| 26 | COLL | COLLEGIUM PHARMACEUTICAL, INC | $718M | 4.6 | 45.6% | 33.7% | 23.6% | 0.6 | 3.3% | -31.5% | $19M | 0.788 |
+| 27 | ABG | ASBURY AUTOMOTIVE GROUP INC | $2.94B | 6.9 | 26.3% | 9.8% | 4.7% | 3.5 | -8.7% | -14.5% | $52M | 0.784 |
+| 28 | SON | SONOCO PRODUCTS CO | $4.75B | 7.9 | 7.3% | 11.7% | 41.7% | 3.3 | 0.2% | 23.4% | $51M | 0.784 |
+| 29 | GSL | Global Ship Lease, Inc. | $1.62B | 4.3 | 32.1% | 16.6% | 7.8% | 0.6 | 1.3% | 72.4% | $14M | 0.780 |
+| 30 | SMPL | Simply Good Foods Co | $923M | 7.6 | 17.1% | 7.3% | 9.0% | 1.7 | -12.0% | -60.0% | $22M | 0.779 |
+| 31 | PAYO | Payoneer Global Inc. | $2.41B | 16.6 | 8.6% | 32.1% | 7.7% | -2.8 | -6.0% | 17.5% | $19M | 0.779 |
+| 32 | GNTX | GENTEX CORP | $4.36B | 8.7 | 10.5% | 16.5% | 9.6% | -0.5 | -4.0% | -11.8% | $51M | 0.777 |
+| 33 | ASO | Academy Sports & Outdoors, Inc. | $3.34B | 6.9 | 6.7% | 17.0% | 2.0% | 0.4 | -6.7% | 6.1% | $83M | 0.775 |
+| 34 | UPBD | UPBOUND GROUP, INC. | $898M | 3.5 | 26.6% | 28.1% | 8.7% | -0.5 | 0.7% | -8.2% | $18M | 0.773 |
+| 35 | HESM | Hess Midstream LP | $4.15B | 7.7 | 17.5% | n/a | 8.4% | 3.6 | -2.1% | 32.8% | $82M | 0.773 |
+| 36 | EMBC | Embecta Corp. | $339M | 5.9 | 53.7% | 39.2% | -3.8% | 4.5 | -3.1% | -62.5% | $6M | 0.772 |
+| 37 | RIGL | RIGEL PHARMACEUTICALS INC | $912M | 7.1 | 8.3% | 24.2% | 64.1% | -0.1 | 4.1% | 66.3% | $12M | 0.772 |
+| 38 | LPG | DORIAN LPG LTD. | $2.49B | 11.9 | 8.4% | 13.4% | 36.3% | 0.0 | 0.3% | 120.3% | $35M | 0.771 |
+| 39 | BLBD | Blue Bird Corp | $1.78B | 10.5 | 8.6% | 21.3% | 9.9% | -0.2 | -0.1% | 11.6% | $29M | 0.770 |
+| 40 | MIDD | MIDDLEBY Corp | $4.77B | 11.4 | 11.7% | 11.4% | 1.6% | 3.1 | -10.8% | 1.5% | $66M | 0.765 |
 
 ## Why each name screens
 
-1. **TOYO** -- TOYO Co., Ltd (Semiconductors & Related Devices). top-quartile FCF yield 25.0%; cheap at 1.8x EV/EBIT; high ROIC 89.0%; revenue +141.5%; buying back stock -19.0%; debt data missing (net cash unverified); WARNING 6m return below -40%
-2. **YELP** -- YELP INC (Services-Personal Services). top-quartile FCF yield 32.1%; cheap at 5.5x EV/EBIT; high ROIC 22.4%; buying back stock -14.0%
-3. **LRN** -- Stride, Inc. (Services-Educational Services). top-quartile FCF yield 12.1%; cheap at 8.9x EV/EBIT; high ROIC 22.0%; revenue +17.9%; buying back stock -4.7%; net cash
-4. **ESEA** -- EUROSEAS LTD. (Deep Sea Foreign Transportation of  Freight). top-quartile FCF yield 28.1%; cheap at 3.6x EV/EBIT; high ROIC 21.5%; 12-1 momentum 37.5%
-5. **NUTX** -- Nutex Health Inc. (Services-Business Services, NEC). top-quartile FCF yield 17.4%; cheap at 4.5x EV/EBIT; high ROIC 98.9%; revenue +82.4% BUT share count +15.1% yoy — growth may be acquisition/issuance-driven, not organic; net cash; 12-1 momentum 90.0%; EARNINGS QUALITY: revenue growth above 50% alongside share count growth above 15% (bought, not organic) — one-off items likely
-6. **ZD** -- ZIFF DAVIS, INC. (Telegraph & Other Message Communications). top-quartile FCF yield 14.9%; cheap at 5.7x EV/EBIT; buying back stock -16.4%; net cash; 12-1 momentum 44.4%
-7. **MDXG** -- MIMEDX GROUP, INC. (Surgical & Medical Instruments & Apparatus). top-quartile FCF yield 10.9%; cheap at 8.8x EV/EBIT; high ROIC 52.6%; revenue +20.0%; net cash
-8. **STRT** -- STRATTEC SECURITY CORP (Motor Vehicle Parts & Accessories). top-quartile FCF yield 15.3%; cheap at 5.5x EV/EBIT; high ROIC 16.1%; buying back stock -4.2%; net cash; 12-1 momentum 2.3%
+1. **TOYO** -- TOYO Co., Ltd (Semiconductors & Related Devices). top-quartile FCF yield 25.3%; cheap at 1.8x EV/EBIT; high ROIC 89.0%; revenue +141.5%; buying back stock -19.0%; debt data missing (net cash unverified); WARNING 6m return below -40%
+2. **YELP** -- YELP INC (Services-Personal Services). top-quartile FCF yield 32.0%; cheap at 5.5x EV/EBIT; high ROIC 22.4%; buying back stock -14.0%
+3. **LRN** -- Stride, Inc. (Services-Educational Services). top-quartile FCF yield 12.3%; cheap at 8.8x EV/EBIT; high ROIC 22.0%; revenue +17.9%; buying back stock -4.7%; net cash
+4. **ESEA** -- EUROSEAS LTD. (Deep Sea Foreign Transportation of  Freight). top-quartile FCF yield 28.1%; cheap at 3.6x EV/EBIT; high ROIC 21.5%; 12-1 momentum 38.8%
+5. **NUTX** -- Nutex Health Inc. (Services-Business Services, NEC). top-quartile FCF yield 17.4%; cheap at 4.5x EV/EBIT; high ROIC 98.9%; revenue +82.4% BUT share count +15.1% yoy — growth may be acquisition/issuance-driven, not organic; net cash; 12-1 momentum 93.1%; EARNINGS QUALITY: revenue growth above 50% alongside share count growth above 15% (bought, not organic) — one-off items likely
+6. **ZD** -- ZIFF DAVIS, INC. (Telegraph & Other Message Communications). top-quartile FCF yield 14.6%; cheap at 5.9x EV/EBIT; buying back stock -16.4%; net cash; 12-1 momentum 48.0%
+7. **STRT** -- STRATTEC SECURITY CORP (Motor Vehicle Parts & Accessories). top-quartile FCF yield 15.4%; cheap at 5.4x EV/EBIT; high ROIC 16.1%; buying back stock -4.2%; net cash; 12-1 momentum 5.5%
+8. **MDXG** -- MIMEDX GROUP, INC. (Surgical & Medical Instruments & Apparatus). top-quartile FCF yield 10.5%; cheap at 9.1x EV/EBIT; high ROIC 52.6%; revenue +20.0%; net cash
 9. **PRDO** -- PERDOCEO EDUCATION Corp (Services-Educational Services). top-quartile FCF yield 10.7%; cheap at 9.9x EV/EBIT; high ROIC 17.8%; revenue +24.2%; buying back stock -3.7%; debt data missing (net cash unverified)
-10. **CRMD** -- CorMedix Inc. (Pharmaceutical Preparations). top-quartile FCF yield 30.0%; cheap at 2.1x EV/EBIT; high ROIC 58.1%; revenue +617.0%; debt data missing (net cash unverified)
-11. **GPOR** -- GULFPORT ENERGY CORP (Crude Petroleum & Natural Gas). top-quartile FCF yield 27.9%; cheap at 6.3x EV/EBIT; high ROIC 17.3%; revenue +48.5%
-12. **GPI** -- GROUP 1 AUTOMOTIVE INC (Retail-Auto Dealers & Gasoline Stations). top-quartile FCF yield 15.3%; cheap at 7.7x EV/EBIT; buying back stock -7.9%
-13. **TPC** -- TUTOR PERINI CORP (General Bldg Contractors - Nonresidential Bldgs). top-quartile FCF yield 12.9%; high ROIC 25.5%; revenue +28.1%; net cash; 12-1 momentum 36.1%
-14. **HRMY** -- Harmony Biosciences Holdings, Inc. (Pharmaceutical Preparations). top-quartile FCF yield 14.8%; cheap at 9.3x EV/EBIT; high ROIC 28.2%; revenue +21.5%; net cash; 12-1 momentum 54.7%
-15. **DXC** -- DXC Technology Co (Services-Computer Processing & Data Preparation). top-quartile FCF yield 52.3%; cheap at 3.1x EV/EBIT; high ROIC 18.7%; buying back stock -10.7%
-16. **BRBR** -- BELLRING BRANDS, INC. (Food and Kindred Products). top-quartile FCF yield 25.7%; cheap at 5.8x EV/EBIT; high ROIC 45.7%; revenue +16.1%; buying back stock -7.7%; WARNING 6m return below -40%
-17. **DAC** -- Danaos Corp (Deep Sea Foreign Transportation of  Freight). top-quartile FCF yield 20.9%; cheap at 5.9x EV/EBIT; buying back stock -3.8%; net cash; 12-1 momentum 84.5%
-18. **CCSI** -- Consensus Cloud Solutions, Inc. (Services-Prepackaged Software). top-quartile FCF yield 15.7%; cheap at 7.5x EV/EBIT; high ROIC 24.2%; buying back stock -3.4%; 12-1 momentum 35.9%
-19. **CRTO** -- Criteo S.A. (Services-Advertising Agencies). top-quartile FCF yield 27.1%; cheap at 2.6x EV/EBIT; high ROIC 18.3%; buying back stock -6.4%; debt data missing (net cash unverified)
-20. **SIG** -- SIGNET JEWELERS LTD (Retail-Jewelry Stores). top-quartile FCF yield 12.7%; cheap at 9.2x EV/EBIT; high ROIC 23.7%; buying back stock -4.4%; debt data missing (net cash unverified); 12-1 momentum 3.6%
-21. **BBWI** -- Bath & Body Works, Inc. (Retail-Retail Stores, NEC). top-quartile FCF yield 24.7%; cheap at 5.4x EV/EBIT; high ROIC 58.7%; buying back stock -4.7%
-22. **UPWK** -- UPWORK, INC (Services-Computer Processing & Data Preparation). top-quartile FCF yield 22.6%; cheap at 7.4x EV/EBIT; high ROIC 20.6%; buying back stock -5.8%; net cash
-23. **SBH** -- Sally Beauty Holdings, Inc. (Retail-Retail Stores, NEC). top-quartile FCF yield 11.6%; cheap at 6.5x EV/EBIT; high ROIC 17.1%; buying back stock -5.4%; 12-1 momentum 1.5%
-24. **NGVT** -- Ingevity Corp (Chemicals & Allied Products). top-quartile FCF yield 11.4%; cheap at 8.0x EV/EBIT; high ROIC 32.9%; buying back stock -5.7%; 12-1 momentum 23.5%
-25. **KFY** -- KORN FERRY (Services-Employment Agencies). cheap at 8.7x EV/EBIT; high ROIC 18.6%; buying back stock -2.0%; net cash; 12-1 momentum 13.2%
+10. **HRMY** -- Harmony Biosciences Holdings, Inc. (Pharmaceutical Preparations). top-quartile FCF yield 15.6%; cheap at 8.7x EV/EBIT; high ROIC 28.2%; revenue +21.5%; net cash; 12-1 momentum 55.0%
+11. **CRMD** -- CorMedix Inc. (Pharmaceutical Preparations). top-quartile FCF yield 29.7%; cheap at 2.2x EV/EBIT; high ROIC 58.1%; revenue +617.0%; debt data missing (net cash unverified)
+12. **GPOR** -- GULFPORT ENERGY CORP (Crude Petroleum & Natural Gas). top-quartile FCF yield 27.5%; cheap at 6.4x EV/EBIT; high ROIC 17.3%; revenue +48.5%
+13. **GPI** -- GROUP 1 AUTOMOTIVE INC (Retail-Auto Dealers & Gasoline Stations). top-quartile FCF yield 15.5%; cheap at 7.7x EV/EBIT; buying back stock -7.9%
+14. **TPC** -- TUTOR PERINI CORP (General Bldg Contractors - Nonresidential Bldgs). top-quartile FCF yield 12.9%; high ROIC 25.5%; revenue +28.1%; net cash; 12-1 momentum 44.8%
+15. **DXC** -- DXC Technology Co (Services-Computer Processing & Data Preparation). top-quartile FCF yield 51.7%; cheap at 3.1x EV/EBIT; high ROIC 18.7%; buying back stock -10.7%
+16. **BRBR** -- BELLRING BRANDS, INC. (Food and Kindred Products). top-quartile FCF yield 25.6%; cheap at 5.8x EV/EBIT; high ROIC 45.7%; revenue +16.1%; buying back stock -7.7%; WARNING 6m return below -40%
+17. **DAC** -- Danaos Corp (Deep Sea Foreign Transportation of  Freight). top-quartile FCF yield 20.8%; cheap at 5.9x EV/EBIT; buying back stock -3.8%; net cash; 12-1 momentum 91.0%
+18. **CCSI** -- Consensus Cloud Solutions, Inc. (Services-Prepackaged Software). top-quartile FCF yield 15.6%; cheap at 7.5x EV/EBIT; high ROIC 24.2%; buying back stock -3.4%; 12-1 momentum 38.9%
+19. **CRTO** -- Criteo S.A. (Services-Advertising Agencies). top-quartile FCF yield 27.7%; cheap at 2.5x EV/EBIT; high ROIC 18.3%; buying back stock -6.4%; debt data missing (net cash unverified)
+20. **SIG** -- SIGNET JEWELERS LTD (Retail-Jewelry Stores). top-quartile FCF yield 12.6%; cheap at 9.3x EV/EBIT; high ROIC 23.7%; buying back stock -4.4%; debt data missing (net cash unverified); 12-1 momentum 4.8%
+21. **BBWI** -- Bath & Body Works, Inc. (Retail-Retail Stores, NEC). top-quartile FCF yield 24.6%; cheap at 5.4x EV/EBIT; high ROIC 58.7%; buying back stock -4.7%
+22. **SBH** -- Sally Beauty Holdings, Inc. (Retail-Retail Stores, NEC). top-quartile FCF yield 11.8%; cheap at 6.4x EV/EBIT; high ROIC 17.1%; buying back stock -5.4%; 12-1 momentum 7.2%
+23. **UPWK** -- UPWORK, INC (Services-Computer Processing & Data Preparation). top-quartile FCF yield 22.5%; cheap at 7.4x EV/EBIT; high ROIC 20.6%; buying back stock -5.8%; net cash
+24. **NGVT** -- Ingevity Corp (Chemicals & Allied Products). top-quartile FCF yield 11.5%; cheap at 8.0x EV/EBIT; high ROIC 32.9%; buying back stock -5.7%; 12-1 momentum 28.5%
+25. **KFY** -- KORN FERRY (Services-Employment Agencies). cheap at 8.6x EV/EBIT; high ROIC 18.6%; buying back stock -2.0%; net cash; 12-1 momentum 12.8%
 26. **COLL** -- COLLEGIUM PHARMACEUTICAL, INC (Pharmaceutical Preparations). top-quartile FCF yield 45.6%; cheap at 4.6x EV/EBIT; high ROIC 33.7%; revenue +23.6%
-27. **SON** -- SONOCO PRODUCTS CO (Paperboard Containers & Boxes). cheap at 7.9x EV/EBIT; revenue +41.7%; 12-1 momentum 18.5%
-28. **ABG** -- ASBURY AUTOMOTIVE GROUP INC (Retail-Auto Dealers & Gasoline Stations). top-quartile FCF yield 25.8%; cheap at 7.0x EV/EBIT; buying back stock -8.7%
-29. **SMPL** -- Simply Good Foods Co (Food and Kindred Products). top-quartile FCF yield 17.5%; cheap at 7.5x EV/EBIT; buying back stock -12.0%
-30. **GSL** -- Global Ship Lease, Inc. (Deep Sea Foreign Transportation of  Freight). top-quartile FCF yield 32.6%; cheap at 4.3x EV/EBIT; high ROIC 16.6%; 12-1 momentum 69.5%
-31. **PAYO** -- Payoneer Global Inc. (Services-Business Services, NEC). high ROIC 32.1%; buying back stock -6.0%; debt data missing (net cash unverified); 12-1 momentum 15.8%
-32. **GNTX** -- GENTEX CORP (Motor Vehicle Parts & Accessories). top-quartile FCF yield 10.3%; cheap at 8.9x EV/EBIT; high ROIC 16.5%; buying back stock -4.0%; debt data missing (net cash unverified)
-33. **ASO** -- Academy Sports & Outdoors, Inc. (Retail-Miscellaneous Shopping Goods Stores). cheap at 6.9x EV/EBIT; high ROIC 17.0%; buying back stock -6.7%; 12-1 momentum 4.2%
-34. **LPG** -- DORIAN LPG LTD. (Deep Sea Foreign Transportation of  Freight). high ROIC 13.4%; revenue +36.3%; 12-1 momentum 116.9%
-35. **HESM** -- Hess Midstream LP (Crude Petroleum & Natural Gas). top-quartile FCF yield 17.6%; cheap at 7.7x EV/EBIT; buying back stock -2.1%; 12-1 momentum 30.8%
-36. **UPBD** -- UPBOUND GROUP, INC. (Services-Equipment Rental & Leasing, NEC). top-quartile FCF yield 26.6%; cheap at 3.5x EV/EBIT; high ROIC 28.1%; debt data missing (net cash unverified)
-37. **EMBC** -- Embecta Corp. (Surgical & Medical Instruments & Apparatus). top-quartile FCF yield 56.6%; cheap at 5.9x EV/EBIT; high ROIC 39.2%; buying back stock -3.1%
-38. **BLBD** -- Blue Bird Corp (Truck & Bus Bodies). cheap at 10.5x EV/EBIT; high ROIC 21.3%; net cash; 12-1 momentum 11.1%
-39. **RIGL** -- RIGEL PHARMACEUTICALS INC (Pharmaceutical Preparations). cheap at 7.2x EV/EBIT; high ROIC 24.2%; revenue +64.1%; net cash; 12-1 momentum 64.4%; EARNINGS QUALITY: net income exceeds revenue — one-off items likely
-40. **HOG** -- HARLEY-DAVIDSON, INC. (Motorcycles, Bicycles & Parts). top-quartile FCF yield 14.8%; cheap at 5.3x EV/EBIT; buying back stock -14.4%; net cash; 12-1 momentum 2.8%
+27. **ABG** -- ASBURY AUTOMOTIVE GROUP INC (Retail-Auto Dealers & Gasoline Stations). top-quartile FCF yield 26.3%; cheap at 6.9x EV/EBIT; buying back stock -8.7%
+28. **SON** -- SONOCO PRODUCTS CO (Paperboard Containers & Boxes). cheap at 7.9x EV/EBIT; revenue +41.7%; 12-1 momentum 23.4%
+29. **GSL** -- Global Ship Lease, Inc. (Deep Sea Foreign Transportation of  Freight). top-quartile FCF yield 32.1%; cheap at 4.3x EV/EBIT; high ROIC 16.6%; 12-1 momentum 72.4%
+30. **SMPL** -- Simply Good Foods Co (Food and Kindred Products). top-quartile FCF yield 17.1%; cheap at 7.6x EV/EBIT; buying back stock -12.0%
+31. **PAYO** -- Payoneer Global Inc. (Services-Business Services, NEC). high ROIC 32.1%; buying back stock -6.0%; debt data missing (net cash unverified); 12-1 momentum 17.5%
+32. **GNTX** -- GENTEX CORP (Motor Vehicle Parts & Accessories). top-quartile FCF yield 10.5%; cheap at 8.7x EV/EBIT; high ROIC 16.5%; buying back stock -4.0%; debt data missing (net cash unverified)
+33. **ASO** -- Academy Sports & Outdoors, Inc. (Retail-Miscellaneous Shopping Goods Stores). cheap at 6.9x EV/EBIT; high ROIC 17.0%; buying back stock -6.7%; 12-1 momentum 6.1%
+34. **UPBD** -- UPBOUND GROUP, INC. (Services-Equipment Rental & Leasing, NEC). top-quartile FCF yield 26.6%; cheap at 3.5x EV/EBIT; high ROIC 28.1%; debt data missing (net cash unverified)
+35. **HESM** -- Hess Midstream LP (Crude Petroleum & Natural Gas). top-quartile FCF yield 17.5%; cheap at 7.7x EV/EBIT; buying back stock -2.1%; 12-1 momentum 32.8%
+36. **EMBC** -- Embecta Corp. (Surgical & Medical Instruments & Apparatus). top-quartile FCF yield 53.7%; cheap at 5.9x EV/EBIT; high ROIC 39.2%; buying back stock -3.1%
+37. **RIGL** -- RIGEL PHARMACEUTICALS INC (Pharmaceutical Preparations). cheap at 7.1x EV/EBIT; high ROIC 24.2%; revenue +64.1%; net cash; 12-1 momentum 66.3%; EARNINGS QUALITY: net income exceeds revenue — one-off items likely
+38. **LPG** -- DORIAN LPG LTD. (Deep Sea Foreign Transportation of  Freight). high ROIC 13.4%; revenue +36.3%; 12-1 momentum 120.3%
+39. **BLBD** -- Blue Bird Corp (Truck & Bus Bodies). cheap at 10.5x EV/EBIT; high ROIC 21.3%; net cash; 12-1 momentum 11.6%
+40. **MIDD** -- MIDDLEBY Corp (Refrigeration & Service Industry Machinery). top-quartile FCF yield 11.7%; cheap at 11.4x EV/EBIT; buying back stock -10.8%; 12-1 momentum 1.5%
 
 ## Data notes
 
