@@ -1,4 +1,4 @@
-# Track record — updated 2026-10-12
+# Track record — updated 2026-10-13
 
 Every verdict since publication. Returns are price-only, no costs. IDEA = published pick; WATCH/PASS tracked so we learn from rejections.
 
@@ -218,7 +218,7 @@ Every verdict since publication. Returns are price-only, no costs. IDEA = publis
 | 2026-09-12 | LAND | 4 | 9.48 | 9.62 | +1.5% | -3.2% | +2.5% | +4.7% | 30 |
 | 2026-09-12 | BCAL | 3 | 21.81 | 21.49 | -1.5% | -3.2% | +2.5% | +1.8% | 30 |
 | 2026-09-12 | MRBK | 4 | 19.61 | 18.71 | -4.6% | -3.2% | +2.5% | -1.4% | 30 |
-| 2026-09-12 | PROP | 4 | 0.45 | 0.41 | -9.0% | -3.2% | +2.5% | -5.8% | 30 |
+| 2026-09-12 | PROP | 4 | 0.45 | 0.41 | -8.9% | -3.2% | +2.5% | -5.7% | 30 |
 | 2026-09-15 | EIG | 3 | 50.01 | 49.56 | -0.9% | -2.5% | +3.0% | +1.6% | 27 |
 | 2026-09-16 | MBLY | 4 | 7.92 | 6.84 | -13.6% | -2.1% | +3.4% | -11.5% | 26 |
 | 2026-09-16 | SMTI | 4 | 35.11 | 35.15 | +0.1% | -2.1% | +3.4% | +2.2% | 26 |

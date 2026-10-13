@@ -1,4 +1,4 @@
-# Research-verdict long/short — updated 2026-10-12
+# Research-verdict long/short — updated 2026-10-13
 
 **Portfolio rules.** Every IDEA enters the LONG book at the first close on or after its publication date; every PASS enters the SHORT book the same way. Within each book names are weighted 1/N, where N is the number of open positions in that book recomputed daily, capped at 20% per name; when N is below 5 the cap binds and the book is deliberately left partly in cash rather than levered up, so a two-name book runs 40% gross. A position stays open for 12 months or until a later note changes the verdict on that ticker (detected as a newer COVERAGE.md row for the same ticker), whichever comes first. The net exposure of the traded book (long weight minus short weight) is offset with IWM so the combined book is dollar-neutral; the raw long-minus-short spread is also reported unhedged. WATCH names are excluded from the traded book and carried as a separate long-only basket, for information only. Returns are price-only on adjusted closes with no costs deducted; an estimate at 10 bps per unit of turnover is printed separately. Cash earns 0%.
 
@@ -8,7 +8,7 @@
 | Book | Since-inception return | Ann. vol | Sharpe |
 |---|---|---|---|
 | Long book (IDEA) | -4.63% | 9.2% | -4.93 |
-| Short book (PASS) | -4.12% | 9.0% | -4.47 |
+| Short book (PASS) | -4.11% | 9.0% | -4.47 |
 | Spread (long − short, unhedged) | -0.58% | 9.4% | -0.55 |
 | Hedged book (dollar-neutral vs IWM) | -2.00% | 9.2% | -2.08 |
 | WATCH basket (excluded, long-only) | -5.63% | 13.1% | -4.21 |
@@ -54,7 +54,7 @@ Estimated trading cost, not deducted above: 7.31 units of cumulative turnover ac
 | NEWT | PASS | 2026-09-09 | 2026-09-09 | 11.95 | 10.97 | -8.17% | -4.13% | -4.04% | open |
 | NGVC | PASS | 2026-09-09 | 2026-09-09 | 27.37 | 30.01 | +9.65% | -4.13% | +13.78% | open |
 | PBYI | PASS | 2026-09-10 | 2026-09-10 | 9.17 | 10.29 | +12.21% | -3.15% | +15.37% | open |
-| PROP | PASS | 2026-09-12 | 2026-09-14 | 0.42 | 0.41 | -3.17% | -3.22% | +0.06% | open |
+| PROP | PASS | 2026-09-12 | 2026-09-14 | 0.42 | 0.41 | -3.07% | -3.22% | +0.15% | open |
 | SCL | PASS | 2026-09-06 | 2026-09-08 | 62.22 | 60.80 | -2.28% | -5.44% | +3.16% | open |
 | SMTI | PASS | 2026-09-16 | 2026-09-16 | 35.10 | 35.15 | +0.14% | -2.12% | +2.26% | open |
 | SPOK | PASS | 2026-09-10 | 2026-09-10 | 10.63 | 10.74 | +1.03% | -3.15% | +4.19% | open |
@@ -69,7 +69,7 @@ Estimated trading cost, not deducted above: 7.31 units of cumulative turnover ac
 | ACIC | WATCH | 2026-09-09 | 2026-09-09 | 9.29 | 10.13 | +9.04% | -4.13% | +13.18% | open |
 | ADMA | WATCH | 2026-09-16 | 2026-09-16 | 8.90 | 10.18 | +14.38% | -2.12% | +16.50% | open |
 | AII | WATCH | 2026-09-11 | 2026-09-11 | 25.93 | 27.12 | +4.59% | -3.55% | +8.14% | open |
-| AKBA | WATCH | 2026-09-07 | 2026-09-08 | 1.03 | 0.79 | -23.28% | -5.44% | -17.84% | open |
+| AKBA | WATCH | 2026-09-07 | 2026-09-08 | 1.03 | 0.79 | -23.30% | -5.44% | -17.86% | open |
 | APEI | WATCH | 2026-09-05 | 2026-09-08 | 45.36 | 48.15 | +6.15% | -5.44% | +11.60% | open |
 | ARRY | WATCH | 2026-09-06 | 2026-09-08 | 4.70 | 3.60 | -23.40% | -5.44% | -17.96% | open |
 | AZTA | WATCH | 2026-09-09 | 2026-09-09 | 30.15 | 37.77 | +25.27% | -4.13% | +29.41% | open |
