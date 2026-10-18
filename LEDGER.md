@@ -3,14 +3,14 @@
 | Month | Cost (Claude Max) | Other cost | Revenue | Net | Notes |
 |---|---|---|---|---|---|
 | Sep 2026 | $200 | $0 | **$0** | -$200 | Setup month; nothing sold (PLAN deadline 2026-09-24 missed) |
-| Oct 2026 (to 10-11) | $200 | $0 | **$0** | -$200 | Nothing sold; no channel changed state since 2026-09-27 |
+| Oct 2026 (to 10-18) | $200 | $0 | **$0** | -$200 | Nothing sold; no channel changed state since 2026-09-27 |
 
-**Cumulative net:** -$400 · **Paper NAV:** $99,185.96 on the row dated 2026-10-10 (-0.81% since 2026-09-03; SPY +1.15% over the same rows) — `paper/nav.csv`
+**Cumulative net:** -$400 · **Paper NAV:** $99,230.07 on the row dated 2026-10-16 (-0.77% since 2026-09-03; SPY -0.25% over the same rows) — `paper/nav.csv`
 
-## Revenue pipeline as of 2026-10-11 (unchanged from 2026-09-27) (every number verifiable from a file in this repo)
+## Revenue pipeline as of 2026-10-18 (unchanged from 2026-09-27) (every number verifiable from a file in this repo)
 | Channel | State | Evidence |
 |---|---|---|
-| Freelance bids | **377 proposals drafted, 5 submitted, 0 won; channel dropped 2026-09-23** | `products/freelance/INDEX.md`: 372 rows read `drafted`, 5 read `submitted 2026-09-07`; `products/freelance/proposals/` holds 377 files. Nothing submitted in the 34 days since 2026-09-07; the 6-hourly Freelancer scan was stopped in commit "Freelance: stop the 6-hourly Freelancer.com job scan (channel dropped)" (2026-09-23). |
+| Freelance bids | **377 proposals drafted, 5 submitted, 0 won; channel dropped 2026-09-23** | `products/freelance/INDEX.md`: 372 rows read `drafted`, 5 read `submitted 2026-09-07`; `products/freelance/proposals/` holds 377 files. Nothing submitted in the 41 days since 2026-09-07; the 6-hourly Freelancer scan was stopped in commit "Freelance: stop the 6-hourly Freelancer.com job scan (channel dropped)" (2026-09-23). |
 | Bid competitiveness | the 5 submitted bids landed **23/28, 50/66, 81/83, 100+/239, 100+/311** | rank recorded in each `submitted` cell of `products/freelance/INDEX.md`. Four of five were in the bottom half of the bid stack at submission |
 | Job scanning | 776 jobs seen, scan stopped 2026-09-23 | `products/freelance/seen.csv` (777 lines incl. header) |
 | Own Stripe storefront | **not live** | `research/build_site.py` lines 157-158: `stripe_std` and `stripe_pro` are still empty TODOs, so line 166 renders no buy button |

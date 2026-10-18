@@ -10468,3 +10468,15 @@ first-order immune; `L_CAGR` is an ABSOLUTE bar and is the most contaminated rea
   Its gain comes from dropping the equity ETFs, the one tranche that is NOT survivorship-selected (PROTOCOL rule 9).
 - Idea 2443 `CAP2 / g = 0.40` (clean both-panel 4a pass, about -1.5 pp CAGR) is still waiting on David's answer from
   2026-10-04; not adopted without it. Re-run output files restored. No edit to RULES.md, baseline.py, bot.py or scan.py.
+
+## 2026-10-18 — Sunday review: rules decision — NO CHANGE, RULES v2 STANDS
+- No new LEADERBOARD rows since 2026-09-23 (fourth week). Strongest KEEP-candidate by min(H1,H2): idea 2435 A
+  `CAP2 + NOEQETF` (4a, U56). **Re-ran `2026-09-23_etf-member-attribution_cloud.py` on the current tape (4728 rows):**
+  U56 10 bps 9.26% / 1.5782 / -8.08%, halves 1.6358 / 1.5637, OOS 1.6366, vs live v2 on the same tape (`python
+  research/baseline.py`) 8.6% / 1.200 / -12.1%, halves 1.237 / 1.171, OOS 1.2751. G10 (hard-coded headline) misses by
+  1.24e-03 on tape length only; every other gate passes. It reproduces on U56.
+- **Not promoted, same reason as the last three weeks:** on B136 it reads 12.41% / 1.1828 / **-16.60%**, H2 1.0306, vs live
+  MaxDD -12.24%, and fails 4a. Its gain comes from dropping the equity ETFs, the one tranche that is NOT
+  survivorship-selected (PROTOCOL rule 9).
+- Idea 2443 `CAP2 / g = 0.40` still waits on David's answer (asked 2026-10-04); not adopted without it. Re-run output
+  files restored. No edit to RULES.md, baseline.py, bot.py or scan.py.
