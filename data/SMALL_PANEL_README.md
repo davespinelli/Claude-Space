@@ -5,8 +5,8 @@ Built 2026-10-23 by `research/cache_small.py`.
 Files: `prices_small.csv` (adjusted closes, 4dp), `volume_small.csv` (share volume),
 `small_meta.csv` (ticker, first_date, last_date, n_rows, max_1d_move, n_steps).
 
-Panel: 729 tickers x 4227 trading days,
-2010-01-04 to 2026-10-22.
+Panel: 729 tickers x 4228 trading days,
+2010-01-04 to 2026-10-23.
 Source universe: `research/deepvalue/universe_under2b.csv` (731 tickers);
 2 dropped for <250 rows of history, 0 returned no data.
 
@@ -42,13 +42,13 @@ this universe, so no calendar-day contamination — cf. QUEUE idea 38).
   adjustment drives heavy distributors negative (VATE is negative for its whole
   pre-2020 history) and emits runs of literal zeros before a listing begins (DEC,
   732 zero bars in 2021-23). A price <= 0 is not a price.
-- **27 isolated one-day bad prints across 15 tickers** — a bar more
+- **25 isolated one-day bad prints across 14 tickers** — a bar more
   than 60% from BOTH neighbours in the same direction (PROP 41 -> 2 -> 59 on
   2020-02-27; SPCB 144 -> 8 -> 144 on 2012-09-25).
 
 ## Data quality — FLAGGED, NOT repaired (you must decide)
 
-43 tickers contain a one-day move above +100% that **does not reverse** — a
+42 tickers contain a one-day move above +100% that **does not reverse** — a
 persistent level step. These are missing split adjustments, post-bankruptcy
 re-listings where the pre-event equity was cancelled, or genuine events. They are
 left in the panel because some are real, but an unfiltered momentum or reversal
@@ -67,7 +67,6 @@ Worst offenders (ticker: max 1-day move):
 
 - `AMPY` +16,079%
 - `ORBS` +3,009%
-- `CAPS` +2,856%
 - `DEC` +1,907%
 - `HIVE` +758%
 - `BNC` +549%
@@ -80,3 +79,4 @@ Worst offenders (ticker: max 1-day move):
 - `BKKT` +234%
 - `RXT` +227%
 - `DCTH` +205%
+- `PAYS` +200%
