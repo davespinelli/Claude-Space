@@ -10,11 +10,11 @@ import ledger
 
 ap = argparse.ArgumentParser(); ap.add_argument("--dry-run", action="store_true"); ap.add_argument("--force-rebalance", action="store_true"); a = ap.parse_args()
 p = ledger.load(); df = latest_scan(); df.index = df.index.str.replace(".", "-")   # back to yfinance symbols
-today = dt.date.today(); is_reb = a.force_rebalance or today.weekday() == 4
+in_names, n_univ, asof, d200 = band_state(RULES["band"])
+is_reb = a.force_rebalance or asof.weekday() == 4   # clause 5 keys on the close being traded, not the wall clock (the job can run after 00:00 UTC)
 prices = df.close.to_dict()
 held = {t: q * prices[t] for t, q in p["positions"].items() if t in prices}
 nav = p["cash"] + sum(held.values())
-in_names, n_univ, asof, d200 = band_state(RULES["band"])
 print(f"RULES v2: {len(in_names)}/{n_univ} names in-band as of {asof}; one position = ${unit_dollars(nav):,.0f} of ${nav:,.0f} NAV")
 tgt = targets(df, nav, held, is_reb)
 orders = []

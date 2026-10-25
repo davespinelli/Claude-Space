@@ -10480,3 +10480,20 @@ first-order immune; `L_CAGR` is an ABSOLUTE bar and is the most contaminated rea
   survivorship-selected (PROTOCOL rule 9).
 - Idea 2443 `CAP2 / g = 0.40` still waits on David's answer (asked 2026-10-04); not adopted without it. Re-run output
   files restored. No edit to RULES.md, baseline.py, bot.py or scan.py.
+
+## 2026-10-25 — Sunday review: rules decision — NO CHANGE, RULES v2 STANDS; rebalance-day bug fixed
+- No new LEADERBOARD rows since 2026-09-23 (fifth week). Strongest KEEP-candidate by min(H1,H2) is still idea 2435 A
+  `CAP2 + NOEQETF` (4a, U56). **Re-ran `2026-09-23_etf-member-attribution_cloud.py` (11 of 12 gates; G10 misses by
+  1.21e-03 on tape length only):** U56 10 bps 9.27% / 1.5792 / -8.08%, halves 1.6389 / 1.5631, OOS 1.6381, vs live v2 on
+  the same tape 8.60% / 1.2009 / -12.05%, halves 1.241 / 1.168 (`research/baseline.py`), OOS 1.2758. Reproduces on U56.
+- **Not promoted, same reason as the last four weeks:** B136 reads 12.44% / 1.1858 / **-16.60%**, H2 1.0320 vs live MaxDD
+  -12.24% — fails 4a; the gain comes from dropping the one non-survivorship-selected tranche (PROTOCOL rule 9). Idea 2443
+  still waits on David (asked 2026-10-04). Re-run output files restored.
+- **Implementation bug fixed (not a rules change):** `paper/apply_rules.py` and `products/bot/bot.py` decided "rebalance
+  day" from the wall clock (`date.today().weekday() == 4`). The daily Action is scheduled 21:30 UTC but has been running
+  at 23:47-00:31 UTC, so the run that started 2026-10-23 00:06 UTC traded **Thursday 10-22's close as a Friday
+  rebalance** (ledger SELL XLI 7, BUY COST 1; Alpaca BUY EEM 2, GOOGL 1, COST 1, SELL XLI 6), and the true Friday run
+  rebalanced again — an off-schedule trade against clause 5. Both scripts now key on the date of the last close in
+  `data/prices.csv`. Verified: `apply_rules.py --dry-run` (with and without `--force-rebalance`) gives no trades on the
+  10-23 book; `bot.py --dry-run --force-rebalance` runs clean. `ledger.py mark` still labels NAV rows with the wall-clock
+  date (cosmetic; the dedupe-keep-last endpoint is right).

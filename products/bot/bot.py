@@ -78,7 +78,7 @@ def main():
     key, sec = os.getenv("ALPACA_API_KEY", ""), os.getenv("ALPACA_SECRET_KEY", "")
     have_keys = key and sec and "PASTE" not in key
     df = latest_scan(); today = dt.date.today()
-    is_reb = a.force_rebalance or today.weekday() == 4
+    is_reb = a.force_rebalance or band_state(RULES["band"])[2].weekday() == 4   # clause 5: the close's date, not the wall clock
     if not have_keys:
         print("No Alpaca keys in .env — offline dry run with $100k notional and no positions.")
         nav, held, prices = 100_000.0, {}, df.close.to_dict()
