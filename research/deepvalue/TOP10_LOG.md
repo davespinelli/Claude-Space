@@ -81,3 +81,19 @@ Written by the weekly tracker email so patterns accumulate. vs S&P = return sinc
 | 10 | ACIC | Watch 2 | +16.1% | 37 | Only new filing is the COO and CIO resigning Oct 1; nothing in our files explains this week's 12% rise [8-K 5.02] |
 
 **Pattern:** Call and conviction still do not separate winners from losers: the top 10 are 9 Watch and 1 Passed, four of them at conviction 2, while the bottom 10 are 8 Watch and 2 Passed, mostly conviction 3. Winners remain notes on improving businesses or screen errors the desk corrected (VNCE, ADMA, IBEX, OPRT), while laggards are mostly levered or shrinking businesses (VRRM, TROX, HE, DCH, BW) that kept falling, with auto parts appearing twice in the bottom 10. Filings explain little on either side: only IBEX's annual results and AZTA's restructuring plausibly bear on a top-10 move, and the bottom 10's filings are mostly officer changes and agreements, none results. This matches the last four weeks, and eight of last week's top 10 remain, so the winners keep persisting.
+
+## 2026-10-25 (prices 2026-10-24)
+| # | Ticker | Call | vs S&P | Days | Why |
+|---|---|---|---|---|---|
+| 1 | VNCE | Watch 2 | +58.0% | 38 | No new filing; the move matches the note's thesis of a real direct-to-consumer turn, comps up 18.4% with raised FY2026 guidance [note] |
+| 2 | RPD | Watch 3 | +33.9% | 46 | No new filing; nothing in our files explains this week's 13% rise. The note's governance-reset thesis rests on JANA's 10.1% stake and board seat [note] |
+| 3 | INGN | Watch 3 | +29.9% | 46 | Sep 30 deal sells the shrinking US oxygen rental business to Rotech for up to $24.8M and lifts the buyback to $45M [8-K 1.01] |
+| 4 | EFOR | Watch 2 | +28.8% | 48 | No new filing; nothing in our files explains the move. The note's next event is Q3 results in late October [no filing since review] |
+| 5 | IBEX | Watch 3 | +26.7% | 44 | FY2026 annual report on Sep 10 showed revenue up 15.4% to a record $644.1M; a credit line was also extended to 2029 [10-K, 8-K 1.01] |
+| 6 | ADMA | Watch 3 | +25.6% | 37 | No new filing; the move matches the note's thesis that ASCENIV grew 23.5% and lifted gross margin to 69.4% [note] |
+| 7 | TCI | Passed 4 | +23.9% | 41 | Nothing in our files explains it; the note's only route to value is a squeeze-out by the 86% controller, none announced [no filing since review] |
+| 8 | CPRI | Watch 3 | +23.6% | 48 | Only new filing names a Chief Legal Officer from Oct 19; nothing in our files explains the move beyond the note's $871M buyback [8-K 8.01] |
+| 9 | RGR | Watch 3 | +23.6% | 47 | Ruger ended its poison pill early on Sep 16 after Beretta's cooperation agreement cleared regulators; note saw a Beretta deal as bull case [8-K 1.01] |
+| 10 | PBYI | Passed 3 | +23.3% | 43 | No new filing; the move extends the run the note flagged, with 2026 profit guidance raised twice to $17-20M [note] |
+
+**Pattern:** Call and conviction still do not separate winners from losers: the top 10 are 8 Watch and 2 Passed at conviction 2-4, while the bottom 10 are 8 Watch and 2 Passed, mostly conviction 3. Winners remain notes on improving businesses or screen errors the desk corrected (VNCE, ADMA, IBEX, RGR), while laggards are mostly levered or shrinking businesses (VRRM, TROX, JACK, DCH, BW, RAIL), with auto parts appearing twice in the bottom 10 again. Filings explain few winners: only INGN's rental sale, IBEX's annual results and RGR's Beretta pact plausibly bear on a top-10 move, while THRM and RAIL in the bottom 10 both reported results that coincided with steep falls. This matches the last five weeks, and seven of last week's top 10 remain, so the winners keep persisting.
