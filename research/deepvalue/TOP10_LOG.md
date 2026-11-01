@@ -97,3 +97,19 @@ Written by the weekly tracker email so patterns accumulate. vs S&P = return sinc
 | 10 | PBYI | Passed 3 | +23.3% | 43 | No new filing; the move extends the run the note flagged, with 2026 profit guidance raised twice to $17-20M [note] |
 
 **Pattern:** Call and conviction still do not separate winners from losers: the top 10 are 8 Watch and 2 Passed at conviction 2-4, while the bottom 10 are 8 Watch and 2 Passed, mostly conviction 3. Winners remain notes on improving businesses or screen errors the desk corrected (VNCE, ADMA, IBEX, RGR), while laggards are mostly levered or shrinking businesses (VRRM, TROX, JACK, DCH, BW, RAIL), with auto parts appearing twice in the bottom 10 again. Filings explain few winners: only INGN's rental sale, IBEX's annual results and RGR's Beretta pact plausibly bear on a top-10 move, while THRM and RAIL in the bottom 10 both reported results that coincided with steep falls. This matches the last five weeks, and seven of last week's top 10 remain, so the winners keep persisting.
+
+## 2026-11-01 (prices 2026-10-31)
+| # | Ticker | Call | vs S&P | Days | Why |
+|---|---|---|---|---|---|
+| 1 | OSPN | Watch 3 | +59.4% | 50 | Q3 results on Oct 29 showed revenue up 12% to $63.9M and full-year revenue and ARR guidance raised; stock rose 34% this week [8-K 2.02, 10-Q] |
+| 2 | RPD | Watch 3 | +51.6% | 53 | No new filing; nothing in our files explains the rise. The note's governance-reset thesis rests on JANA's 10.1% stake and board seat [note] |
+| 3 | CPRI | Watch 3 | +42.2% | 55 | Only new filing names a Chief Legal Officer from Oct 19; nothing in our files explains the move beyond the note's $871M buyback [8-K 8.01] |
+| 4 | VNCE | Watch 2 | +39.5% | 45 | No new filing; the move matches the note's thesis of a real direct-to-consumer turn, comps up 18.4% with raised FY2026 guidance [note] |
+| 5 | DFIN | Watch 3 | +37.4% | 55 | Q3 results on Oct 29 showed sales up 5.5%, adjusted EBITDA margin up 1.2 points to 29.4% and free cash flow up 45% [8-K 2.02] |
+| 6 | BDL | Watch 2 | +36.2% | 51 | No new filing; nothing in our files explains this week's 24% rise. The note's next event is the FY2026 10-K due in December [no filing since review] |
+| 7 | ADMA | Watch 3 | +32.0% | 44 | No new filing; the move matches the note's thesis that ASCENIV grew 23.5% and lifted gross margin to 69.4% [note] |
+| 8 | OPRT | Watch 3 | +30.0% | 49 | Only new filing names a new CFO, ex-Discover; otherwise the move matches the note's thesis of falling funding costs [8-K 5.02, note] |
+| 9 | NABL | Watch 3 | +28.7% | 53 | No new filing; nothing in our files explains the rise. The note's next test is Q3 results in early November, ARR versus guide and buybacks [no filing since review] |
+| 10 | TCI | Passed 4 | +27.9% | 48 | Nothing in our files explains it; the note's only route to value is a squeeze-out by the 86% controller, none announced [no filing since review] |
+
+**Pattern:** Call and conviction still do not separate winners from losers: the top 10 are 9 Watch and 1 Passed at conviction 2-4, while the bottom 10 are 9 Watch and 1 Passed, mostly conviction 3, and software names sit on both lists. Winners remain notes on improving or recurring businesses the desk found mispriced (VNCE, ADMA, OSPN, DFIN), while laggards are mostly levered or shrinking businesses (VRRM, DCH, CLW, BW, RAIL) that kept falling. This week filings did matter for once: OSPN and DFIN both rose on Q3 results, yet six of the bottom 10 also reported results or Q3 filings and fell, so results cut both ways. This broadly matches earlier weeks, and five of last week's top 10 remain, so winners still mostly persist.
