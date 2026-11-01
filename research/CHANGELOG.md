@@ -10497,3 +10497,20 @@ first-order immune; `L_CAGR` is an ABSOLUTE bar and is the most contaminated rea
   `data/prices.csv`. Verified: `apply_rules.py --dry-run` (with and without `--force-rebalance`) gives no trades on the
   10-23 book; `bot.py --dry-run --force-rebalance` runs clean. `ledger.py mark` still labels NAV rows with the wall-clock
   date (cosmetic; the dedupe-keep-last endpoint is right).
+
+## 2026-11-01 — Sunday review: rules decision — NO CHANGE, RULES v2 STANDS; Friday rebalance missed (data lag)
+- No new LEADERBOARD rows since 2026-09-23 (sixth week). Strongest KEEP-candidate by min(H1,H2) is still idea 2435 A
+  `CAP2 + NOEQETF` (4a, U56). **Re-ran `2026-09-23_etf-member-attribution_cloud.py` — 12 of 12 gates pass this time:**
+  U56 10 bps RESPREAD 9.27% / 1.5809 / -8.08%, halves 1.6317 / 1.5710, OOS 1.6406, vs live v2 on the same tape 8.63% /
+  1.2046 / -12.05%, OOS 1.2822 (`research/baseline.py`: 8.6% / 1.205 / -12.1%, halves 1.241 / 1.176). Reproduces on U56.
+- **Not promoted, same reason as the last five weeks:** B136 reads 12.45% / 1.1870 / **-16.60%**, H2 1.0348 vs live B136
+  MaxDD -12.24% — fails 4a; the gain comes from dropping the one non-survivorship-selected tranche (PROTOCOL rule 9).
+  Idea 2443 still waits on David (asked 2026-10-04). Re-run output files restored. No edit to RULES.md, baseline.py,
+  bot.py or scan.py.
+- **Operational finding (not changed this review):** every daily run of 10-27..10-31 UTC cached prices only through the
+  PRIOR session's close (`data/prices.csv` ends 2026-10-29; the run at 2026-10-31 00:56 UTC, i.e. Friday 20:56 ET, had no
+  10-30 bar). Because clause 5 is keyed on the close's date (`asof.weekday() == 4`), the **Friday 10-30 rebalance did not
+  run** in either the ledger or Alpaca (no rows in trades.csv / orders.csv after 10-23). If the lag persists, Monday's
+  run sees 10-30 as `asof` and rebalances one session late; if the lag clears, the 10-30 rebalance is skipped entirely.
+  The same test also skips any week whose Friday is a market holiday. A catch-up rule ("rebalance on the first run whose
+  last close is in a later week than the last rebalance close") needs a live-data test before it ships.
