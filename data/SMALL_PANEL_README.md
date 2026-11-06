@@ -1,13 +1,13 @@
 # Small-cap price panel — survivorship warning
 
-Built 2026-10-30 by `research/cache_small.py`.
+Built 2026-11-06 by `research/cache_small.py`.
 
 Files: `prices_small.csv` (adjusted closes, 4dp), `volume_small.csv` (share volume),
 `small_meta.csv` (ticker, first_date, last_date, n_rows, max_1d_move, n_steps).
 
-Panel: 725 tickers x 4232 trading days,
-2010-01-04 to 2026-10-29.
-Source universe: `research/deepvalue/universe_under2b.csv` (727 tickers);
+Panel: 714 tickers x 4237 trading days,
+2010-01-04 to 2026-11-05.
+Source universe: `research/deepvalue/universe_under2b.csv` (716 tickers);
 2 dropped for <250 rows of history, 0 returned no data.
 
 ## SURVIVORSHIP BIAS — read before using any backtest on this panel
@@ -70,6 +70,7 @@ Worst offenders (ticker: max 1-day move):
 - `DEC` +1,907%
 - `CHOW` +861%
 - `HIVE` +758%
+- `SUPN` +572%
 - `BNC` +549%
 - `ORGO` +513%
 - `SBET` +433%
@@ -79,4 +80,3 @@ Worst offenders (ticker: max 1-day move):
 - `PBYI` +295%
 - `GEVO` +262%
 - `BKKT` +234%
-- `RXT` +227%
