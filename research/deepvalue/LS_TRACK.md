@@ -1,4 +1,4 @@
-# Research-verdict long/short — updated 2026-11-09
+# Research-verdict long/short — updated 2026-11-10
 
 **Portfolio rules.** Every IDEA enters the LONG book at the first close on or after its publication date; every PASS enters the SHORT book the same way. Within each book names are weighted 1/N, where N is the number of open positions in that book recomputed daily, capped at 20% per name; when N is below 5 the cap binds and the book is deliberately left partly in cash rather than levered up, so a two-name book runs 40% gross. A position stays open for 12 months or until a later note changes the verdict on that ticker (detected as a newer COVERAGE.md row for the same ticker), whichever comes first. The net exposure of the traded book (long weight minus short weight) is offset with IWM so the combined book is dollar-neutral; the raw long-minus-short spread is also reported unhedged. WATCH names are excluded from the traded book and carried as a separate long-only basket, for information only. Returns are price-only on adjusted closes with no costs deducted; an estimate at 10 bps per unit of turnover is printed separately. Cash earns 0%.
 
@@ -8,16 +8,16 @@
 | Book | Since-inception return | Ann. vol | Sharpe |
 |---|---|---|---|
 | Long book (IDEA) | -9.48% | 21.5% | -2.43 |
-| Short book (PASS) | -7.49% | 16.8% | -2.45 |
-| Spread (long − short, unhedged) | -2.17% | 14.6% | -0.75 |
-| Hedged book (dollar-neutral vs IWM) | -3.57% | 14.6% | -1.30 |
-| WATCH basket (excluded, long-only) | -1.01% | 19.9% | -0.18 |
+| Short book (PASS) | -7.41% | 16.9% | -2.41 |
+| Spread (long − short, unhedged) | -2.26% | 14.7% | -0.78 |
+| Hedged book (dollar-neutral vs IWM) | -3.66% | 14.7% | -1.32 |
+| WATCH basket (excluded, long-only) | -0.98% | 19.9% | -0.17 |
 | IWM | -4.31% | 19.0% | -1.17 |
 | SPY | -2.03% | 16.1% | -0.62 |
 
 Hit rate: longs beating IWM since entry 20% (1/5) · PASS names underperforming IWM since entry 68% (23/34).
 
-*Over 46 trading days the hedged verdict book returned -3.57% (Sharpe -1.30); longs beat IWM 20% of the time and shorts underperformed IWM 68% of the time.*
+*Over 46 trading days the hedged verdict book returned -3.66% (Sharpe -1.32); longs beat IWM 20% of the time and shorts underperformed IWM 68% of the time.*
 
 <!--/LS_SUMMARY-->
 
@@ -41,19 +41,19 @@ Estimated trading cost, not deducted above: 8.20 units of cumulative turnover ac
 | EIG | PASS | 2026-09-15 | 2026-09-15 | 49.91 | 47.56 | -4.71% | -0.92% | -3.79% | open |
 | FET | PASS | 2026-09-09 | 2026-09-09 | 80.22 | 71.27 | -11.16% | -2.54% | -8.61% | open |
 | GIC | PASS | 2026-09-10 | 2026-09-10 | 38.66 | 46.30 | +19.76% | -1.55% | +21.31% | open |
-| GLP | PASS | 2026-09-16 | 2026-09-16 | 50.76 | 41.46 | -18.32% | -0.50% | -17.82% | open |
+| GLP | PASS | 2026-09-16 | 2026-09-16 | 49.87 | 41.46 | -16.87% | -0.50% | -16.38% | open |
 | HBCP | PASS | 2026-09-11 | 2026-09-11 | 68.85 | 61.72 | -10.36% | -1.95% | -8.41% | open |
 | INVX | PASS | 2026-09-22 | 2026-09-22 | 27.97 | 25.32 | -9.47% | -1.64% | -7.84% | open |
 | KODK | PASS | 2026-09-06 | 2026-09-08 | 9.28 | 8.29 | -10.67% | -3.88% | -6.79% | open |
 | LAND | PASS | 2026-09-12 | 2026-09-14 | 9.31 | 6.98 | -25.05% | -1.62% | -23.43% | open |
 | MBLY | PASS | 2026-09-16 | 2026-09-16 | 7.82 | 5.86 | -25.06% | -0.50% | -24.57% | open |
 | MLKN | PASS | 2026-09-09 | 2026-09-09 | 21.65 | 22.33 | +3.14% | -2.54% | +5.68% | open |
-| MRBK | PASS | 2026-09-12 | 2026-09-14 | 19.77 | 16.82 | -14.92% | -1.62% | -13.30% | open |
+| MRBK | PASS | 2026-09-12 | 2026-09-14 | 19.60 | 16.82 | -14.19% | -1.62% | -12.57% | open |
 | MVBF | PASS | 2026-09-19 | 2026-09-21 | 30.30 | 25.78 | -14.92% | -1.07% | -13.84% | open |
 | NATH | PASS | 2026-09-11 | 2026-10-27 | 102.05 | 102.05 | +0.00% | +0.83% | -0.83% | open |
 | NEWT | PASS | 2026-09-09 | 2026-09-09 | 11.95 | 10.98 | -8.09% | -2.54% | -5.54% | open |
 | NGVC | PASS | 2026-09-09 | 2026-09-09 | 27.37 | 29.12 | +6.39% | -2.54% | +8.94% | open |
-| PBYI | PASS | 2026-09-10 | 2026-09-10 | 9.17 | 8.40 | -8.45% | -1.55% | -6.90% | open |
+| PBYI | PASS | 2026-09-10 | 2026-09-10 | 9.17 | 8.40 | -8.40% | -1.55% | -6.85% | open |
 | PROP | PASS | 2026-09-12 | 2026-09-14 | 0.42 | 0.37 | -12.06% | -1.62% | -10.44% | open |
 | SCL | PASS | 2026-09-06 | 2026-09-08 | 62.22 | 68.09 | +9.43% | -3.88% | +13.31% | open |
 | SMTI | PASS | 2026-09-16 | 2026-09-16 | 35.10 | 32.10 | -8.55% | -0.50% | -8.05% | open |
@@ -65,11 +65,11 @@ Estimated trading cost, not deducted above: 8.20 units of cumulative turnover ac
 | UTI | PASS | 2026-09-10 | 2026-09-10 | 20.60 | 21.95 | +6.55% | -1.55% | +8.10% | open |
 | VATE | PASS | 2026-09-09 | 2026-09-09 | 6.79 | 5.42 | -20.18% | -2.54% | -17.63% | open |
 | VEL | PASS | 2026-09-10 | 2026-09-10 | 18.12 | 17.65 | -2.59% | -1.55% | -1.05% | open |
-| WMK | PASS | 2026-09-17 | 2026-09-17 | 72.75 | 79.89 | +9.81% | -1.02% | +10.84% | open |
+| WMK | PASS | 2026-09-17 | 2026-09-17 | 72.43 | 79.89 | +10.30% | -1.02% | +11.32% | open |
 | ACIC | WATCH | 2026-09-09 | 2026-09-09 | 9.29 | 10.01 | +7.75% | -2.54% | +10.29% | open |
 | ADMA | WATCH | 2026-09-16 | 2026-09-16 | 8.90 | 12.79 | +43.71% | -0.50% | +44.20% | open |
 | AII | WATCH | 2026-09-11 | 2026-09-11 | 25.93 | 27.76 | +7.06% | -1.95% | +9.01% | open |
-| AKBA | WATCH | 2026-09-07 | 2026-09-08 | 1.03 | 0.53 | -48.27% | -3.88% | -44.40% | open |
+| AKBA | WATCH | 2026-09-07 | 2026-09-08 | 1.03 | 0.53 | -48.25% | -3.88% | -44.38% | open |
 | APEI | WATCH | 2026-09-05 | 2026-09-08 | 45.36 | 39.09 | -13.82% | -3.88% | -9.95% | open |
 | ARRY | WATCH | 2026-09-06 | 2026-09-08 | 4.70 | 5.19 | +10.43% | -3.88% | +14.30% | open |
 | AZTA | WATCH | 2026-09-09 | 2026-09-09 | 30.15 | 40.95 | +35.82% | -2.54% | +38.36% | open |
@@ -84,7 +84,7 @@ Estimated trading cost, not deducted above: 8.20 units of cumulative turnover ac
 | BRBR | WATCH | 2026-09-04 | 2026-09-04 | 10.39 | 9.62 | -7.41% | -4.31% | -3.10% | open |
 | BSVN | WATCH | 2026-09-19 | 2026-09-21 | 53.94 | 58.81 | +9.03% | -1.07% | +10.10% | open |
 | CASH | WATCH | 2026-09-10 | 2026-09-10 | 79.18 | 76.55 | -3.32% | -1.55% | -1.77% | open |
-| CBNK | WATCH | 2026-09-11 | 2026-09-11 | 36.25 | 42.75 | +17.93% | -1.95% | +19.88% | open |
+| CBNK | WATCH | 2026-09-11 | 2026-09-11 | 36.13 | 42.75 | +18.32% | -1.95% | +20.27% | open |
 | CFFI | WATCH | 2026-09-17 | 2026-09-17 | 94.01 | 107.70 | +14.56% | -1.02% | +15.59% | open |
 | CFFN | WATCH | 2026-09-12 | 2026-09-14 | 8.82 | 8.60 | -2.50% | -1.62% | -0.88% | open |
 | CHCT | WATCH | 2026-09-11 | 2026-09-11 | 14.61 | 14.84 | +1.57% | -1.95% | +3.53% | open |
@@ -135,7 +135,7 @@ Estimated trading cost, not deducted above: 8.20 units of cumulative turnover ac
 | GLRE | WATCH | 2026-09-11 | 2026-09-11 | 14.97 | 16.13 | +7.75% | -1.95% | +9.70% | open |
 | GSL | WATCH | 2026-09-09 | 2026-09-09 | 45.02 | 41.21 | -8.46% | -2.54% | -5.92% | open |
 | GTY | WATCH | 2026-09-12 | 2026-09-14 | 31.50 | 28.82 | -8.52% | -1.62% | -6.90% | open |
-| HAFC | WATCH | 2026-09-14 | 2026-09-14 | 32.05 | 32.68 | +1.97% | -1.62% | +3.58% | open |
+| HAFC | WATCH | 2026-09-14 | 2026-09-14 | 31.78 | 32.68 | +2.85% | -1.62% | +4.47% | open |
 | HE | WATCH | 2026-09-04 | 2026-09-04 | 11.09 | 9.07 | -18.21% | -4.31% | -13.90% | open |
 | HLF | WATCH | 2026-09-09 | 2026-09-09 | 12.63 | 15.70 | +24.31% | -2.54% | +26.85% | open |
 | HLIT | WATCH | 2026-09-05 | 2026-09-08 | 11.96 | 10.23 | -14.46% | -3.88% | -10.59% | open |
@@ -169,7 +169,7 @@ Estimated trading cost, not deducted above: 8.20 units of cumulative turnover ac
 | MBWM | WATCH | 2026-09-14 | 2026-09-14 | 61.33 | 61.63 | +0.49% | -1.62% | +2.11% | open |
 | MCB | WATCH | 2026-09-17 | 2026-09-17 | 88.56 | 96.43 | +8.89% | -1.02% | +9.91% | open |
 | MED | WATCH | 2026-09-07 | 2026-09-08 | 12.16 | 13.37 | +9.95% | -3.88% | +13.83% | open |
-| MGPI | WATCH | 2026-09-07 | 2026-11-02 | 17.74 | 17.75 | +0.06% | +1.21% | -1.15% | open |
+| MGPI | WATCH | 2026-09-07 | 2026-11-02 | 17.74 | 18.53 | +4.45% | +1.21% | +3.25% | open |
 | MTRX | WATCH | 2026-09-06 | 2026-09-08 | 10.81 | 9.60 | -11.19% | -3.88% | -7.32% | open |
 | MYFW | WATCH | 2026-09-17 | 2026-09-17 | 30.60 | 31.00 | +1.31% | -1.02% | +2.33% | open |
 | NABL | WATCH | 2026-09-07 | 2026-09-08 | 3.85 | 4.81 | +24.94% | -3.88% | +28.81% | open |
