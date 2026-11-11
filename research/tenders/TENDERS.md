@@ -1,15 +1,15 @@
 # Tender offers with odd-lot priority
 
-_Generated 2026-11-10 · EDGAR form indexes, last 45 days · 204 tender filings → 133 distinct offers, of which 19 are common-stock self-tenders · 1 carry odd-lot priority (1 in common stock)._
+_Generated 2026-11-11 · EDGAR form indexes, last 45 days · 204 tender filings → 133 distinct offers, of which 19 are common-stock self-tenders · 1 carry odd-lot priority (1 in common stock)._
 
 ## Live share tenders
 
 | Ticker | Company | Type | Offer price / range | Current | Premium lo/hi | 99-sh profit lo/hi | Expires | Days | Odd-lot | Flags | Filing |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| BMEZ | BlackRock Health Sciences Term Trust | Fixed price | $18.42 | $17.65 | +4.4% | $76 | 2026-11-18 | 8 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1785971/000119312526424214/0001193125-26-424214-index.htm) |
-| HSBC | HSBC HOLDINGS PLC | Fixed price | $17.76 | $90.22 | -80.3% | $-7,174 | 2026-11-19 | 9 | no | price parse suspect — verify against the filing | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1089113/000162828026070495/0001628280-26-070495-index.htm) |
-| INVE | INVE Technologies, Inc. | Fixed price | $3.40 | $2.65 | +28.3% | $74 | 2026-11-19 | 9 | unclear | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1036044/000121390026111186/0001213900-26-111186-index.htm) |
-| NFJ | Virtus Dividend, Interest & Premium St | not found | not found | $14.29 | n/a | n/a | not found | — | no | offer price not parsed | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1260563/000119312526417835/0001193125-26-417835-index.htm) |
+| BMEZ | BlackRock Health Sciences Term Trust | Fixed price | $18.42 | $17.55 | +5.0% | $86 | 2026-11-18 | 7 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1785971/000119312526424214/0001193125-26-424214-index.htm) |
+| HSBC | HSBC HOLDINGS PLC | Fixed price | $17.76 | $90.22 | -80.3% | $-7,174 | 2026-11-19 | 8 | no | price parse suspect — verify against the filing | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1089113/000162828026070495/0001628280-26-070495-index.htm) |
+| INVE | INVE Technologies, Inc. | Fixed price | $3.40 | $2.65 | +28.3% | $74 | 2026-11-19 | 8 | unclear | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1036044/000121390026111186/0001213900-26-111186-index.htm) |
+| NFJ | Virtus Dividend, Interest & Premium St | not found | not found | $14.22 | n/a | n/a | not found | — | no | offer price not parsed | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1260563/000119312526417835/0001193125-26-417835-index.htm) |
 
 ### Odd-lot language, quoted
 
