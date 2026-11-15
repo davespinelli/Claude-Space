@@ -113,3 +113,19 @@ Written by the weekly tracker email so patterns accumulate. vs S&P = return sinc
 | 10 | TCI | Passed 4 | +27.9% | 48 | Nothing in our files explains it; the note's only route to value is a squeeze-out by the 86% controller, none announced [no filing since review] |
 
 **Pattern:** Call and conviction still do not separate winners from losers: the top 10 are 9 Watch and 1 Passed at conviction 2-4, while the bottom 10 are 9 Watch and 1 Passed, mostly conviction 3, and software names sit on both lists. Winners remain notes on improving or recurring businesses the desk found mispriced (VNCE, ADMA, OSPN, DFIN), while laggards are mostly levered or shrinking businesses (VRRM, DCH, CLW, BW, RAIL) that kept falling. This week filings did matter for once: OSPN and DFIN both rose on Q3 results, yet six of the bottom 10 also reported results or Q3 filings and fell, so results cut both ways. This broadly matches earlier weeks, and five of last week's top 10 remain, so winners still mostly persist.
+
+## 2026-11-15 (prices 2026-11-14)
+| # | Ticker | Call | vs S&P | Days | Why |
+|---|---|---|---|---|---|
+| 1 | VNCE | Watch 2 | +69.0% | 59 | No new filing; the move matches the note's thesis of a real direct-to-consumer turn, comps up 18.4% with raised FY2026 guidance [note] |
+| 2 | CPRI | Watch 3 | +63.4% | 69 | Only new filing names a Chief Legal Officer from Oct 19; nothing in our files explains the move beyond the note's $871M buyback [8-K 8.01] |
+| 3 | TLS | Passed 3 | +62.1% | 67 | Q3 results on Nov 9 showed record profit, revenue up 7.3%, guidance raised on $58M of new orders; stock up 62% this week [8-K 2.02] |
+| 4 | OPRT | Watch 3 | +54.6% | 63 | Q3 results on Nov 3 showed revenue growing again for the first time since 2023, net income up to $23M, outlook raised [8-K 2.02] |
+| 5 | ADMA | Watch 3 | +53.5% | 58 | No new filing; the move matches the note's thesis that ASCENIV grew 23.5% and lifted gross margin to 69.4% [note] |
+| 6 | IBEX | Watch 3 | +49.5% | 65 | Q1 results on Nov 5 showed record revenue up 16% to $175.2M, EPS up 20% and guidance raised; stock rose 28% this week [8-K 2.02] |
+| 7 | AZTA | Watch 2 | +48.9% | 65 | FY2026 results on Nov 10 guided FY2027 adjusted EBITDA margin up 2-2.5 points; stock rose 17% this week [8-K 2.02] |
+| 8 | DFIN | Watch 3 | +41.1% | 69 | Q3 results on Oct 29 showed sales up 5.5%, adjusted EBITDA margin up 1.2 points to 29.4% and free cash flow up 45% [8-K 2.02] |
+| 9 | OSPN | Watch 3 | +38.8% | 64 | Q3 results on Oct 29 showed revenue up 12% to $63.9M and full-year revenue and ARR guidance raised [10-Q, 8-K exhibits] |
+| 10 | TREE | Watch 3 | +34.8% | 64 | Q3 results on Nov 3 showed revenue up 12%, a tenth straight double-digit quarter, led by Insurance up 15% [8-K 2.02] |
+
+**Pattern:** Call and conviction still do not separate winners from losers: the top 10 are 9 Watch and 1 Passed, mostly conviction 3, while the bottom 10 hold 6 Watch, 3 Passed and the desk's one Pick (STRA). Winners are notes on improving or recurring businesses the desk found mispriced, while laggards are mostly levered, shrinking or reimbursement-hit businesses (BW, VRRM, SSTK, CRMD, AKBA). Results season mattered more than ever this week: six of the top 10 rose on Q3 results with raised guidance, but nearly all the bottom 10 also reported and fell, so results cut both ways. This matches earlier weeks, and six of last week's top 10 remain, so the winners keep persisting.
