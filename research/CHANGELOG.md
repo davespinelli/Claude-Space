@@ -10514,3 +10514,18 @@ first-order immune; `L_CAGR` is an ABSOLUTE bar and is the most contaminated rea
   run sees 10-30 as `asof` and rebalances one session late; if the lag clears, the 10-30 rebalance is skipped entirely.
   The same test also skips any week whose Friday is a market holiday. A catch-up rule ("rebalance on the first run whose
   last close is in a later week than the last rebalance close") needs a live-data test before it ships.
+
+## 2026-11-15 — Sunday review: rules decision — NO CHANGE, RULES v2 STANDS; two Friday rebalances skipped (data lag)
+- No new LEADERBOARD rows since 2026-09-23 (eighth week; the 2026-11-08 review did not run). Strongest KEEP-candidate by
+  min(H1,H2) is still idea 2435 A `CAP2 + NOEQETF` (4a, U56). **Re-ran `2026-09-23_etf-member-attribution_cloud.py`: 11 of
+  12 gates** — G10 (reproduce the 09-23 headlines to 1e-3) now FAILS at 3.07e-3 because `data/prices.csv` has grown by the
+  weak Nov-2026 tape, not because the construction changed (G1/G2/G3 bit-identity with the live book still pass). On the
+  current tape, U56 10 bps RESPREAD: 9.19% / 1.5663 / -8.08%, halves 1.6248 / 1.5508, OOS 1.6166 vs live v2 8.53% / 1.1903 /
+  -12.05%, OOS 1.2566 — 4a PASS. B136: 12.42% / 1.1831 / **-16.64%**, H2 1.0333 vs live MaxDD -12.24% — **4a FAIL**.
+  Not promoted, same reason as the prior six weeks. Re-run output files restored to the committed versions. No edit to
+  RULES.md, baseline.py, bot.py or scan.py. `baseline.py` self-check: v2 8.5% / 1.190 / -12.1%, halves 1.235 / 1.154.
+- **Operational:** the T-1 price lag persisted through the 2026-11-07 run (`data/prices.csv` ended 11-05 there; 11-04 at
+  the 11-06 run), so clause 5 skipped BOTH the 10-30 and 11-06 Friday rebalances. The lag had cleared by the 11-10 run
+  (ended 11-09) and the 11-13 rebalance ran (14 ledger trades, 15 Alpaca orders). The catch-up rule proposed 11-01 is
+  still unshipped. Ledger vs Alpaca net quantity now differs on AAPL (+1 Alpaca), EEM (Alpaca still holds 1, band=OUT),
+  KRE (-1), XLV (-1, Alpaca sold 1 on 11-13 that the ledger did not), XLY (-1).
