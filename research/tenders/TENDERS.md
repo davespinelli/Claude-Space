@@ -1,16 +1,16 @@
 # Tender offers with odd-lot priority
 
-_Generated 2026-11-17 · EDGAR form indexes, last 45 days · 215 tender filings → 143 distinct offers, of which 18 are common-stock self-tenders · 2 carry odd-lot priority (2 in common stock)._
+_Generated 2026-11-18 · EDGAR form indexes, last 45 days · 215 tender filings → 143 distinct offers, of which 18 are common-stock self-tenders · 2 carry odd-lot priority (2 in common stock)._
 
 ## Live share tenders
 
 | Ticker | Company | Type | Offer price / range | Current | Premium lo/hi | 99-sh profit lo/hi | Expires | Days | Odd-lot | Flags | Filing |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| BMEZ | BlackRock Health Sciences Term Trust | Fixed price | $18.42 | $16.91 | +8.9% | $149 | 2026-11-18 | 1 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1785971/000119312526424214/0001193125-26-424214-index.htm) |
-| HSBC | HSBC HOLDINGS PLC | Fixed price | $17.76 | $88.15 | -79.9% | $-6,969 | 2026-11-19 | 2 | no | price parse suspect — verify against the filing | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1089113/000162828026070495/0001628280-26-070495-index.htm) |
-| INVE | INVE Technologies, Inc. | Fixed price | $3.40 | $2.58 | +31.8% | $81 | 2026-11-19 | 2 | unclear | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1036044/000121390026111186/0001213900-26-111186-index.htm) |
-| MYPS | PLAYSTUDIOS, Inc. | Fixed price | $4.30 | $5.08 | -15.4% | $-77 | 2026-12-10 | 23 | yes | market above offer | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1823878/000207709626000313/0002077096-26-000313-index.htm) |
-| NFJ | Virtus Dividend, Interest & Premium St | not found | not found | $13.94 | n/a | n/a | not found | — | no | offer price not parsed | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1260563/000119312526417835/0001193125-26-417835-index.htm) |
+| BMEZ | BlackRock Health Sciences Term Trust | Fixed price | $18.42 | $16.64 | +10.7% | $176 | 2026-11-18 | 0 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1785971/000119312526424214/0001193125-26-424214-index.htm) |
+| HSBC | HSBC HOLDINGS PLC | Fixed price | $17.76 | $87.28 | -79.7% | $-6,882 | 2026-11-19 | 1 | no | price parse suspect — verify against the filing | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1089113/000162828026070495/0001628280-26-070495-index.htm) |
+| INVE | INVE Technologies, Inc. | Fixed price | $3.40 | $2.64 | +28.8% | $75 | 2026-11-19 | 1 | unclear | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1036044/000121390026111186/0001213900-26-111186-index.htm) |
+| MYPS | PLAYSTUDIOS, Inc. | Fixed price | $4.30 | $4.99 | -13.8% | $-68 | 2026-12-10 | 22 | yes | market above offer | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1823878/000207709626000313/0002077096-26-000313-index.htm) |
+| NFJ | Virtus Dividend, Interest & Premium St | not found | not found | $13.72 | n/a | n/a | not found | — | no | offer price not parsed | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1260563/000119312526417835/0001193125-26-417835-index.htm) |
 
 ### Odd-lot language, quoted
 
