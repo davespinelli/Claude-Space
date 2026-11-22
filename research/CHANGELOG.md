@@ -10529,3 +10529,15 @@ first-order immune; `L_CAGR` is an ABSOLUTE bar and is the most contaminated rea
   (ended 11-09) and the 11-13 rebalance ran (14 ledger trades, 15 Alpaca orders). The catch-up rule proposed 11-01 is
   still unshipped. Ledger vs Alpaca net quantity now differs on AAPL (+1 Alpaca), EEM (Alpaca still holds 1, band=OUT),
   KRE (-1), XLV (-1, Alpaca sold 1 on 11-13 that the ledger did not), XLY (-1).
+
+## 2026-11-22 — Sunday review: rules decision — NO CHANGE, RULES v2 STANDS
+- No new LEADERBOARD rows since 2026-09-23 (ninth week). Strongest KEEP-candidate by min(H1,H2) is still idea 2435 A
+  `CAP2 + NOEQETF` (4a, U56). **Re-ran `2026-09-23_etf-member-attribution_cloud.py`: 11 of 12 gates** — G10 fails at
+  9.18e-3 (was 3.07e-3 last week) only because `data/prices.csv` grew through the 11-16..11-20 sell-off; bit-identity
+  gates G1/G2 pass. Current tape, U56 RESPREAD 10 bps: 9.03% / 1.5387 / -8.08%, halves 1.6247 / 1.5026, OOS 1.5713 vs
+  live v2 (`research/baseline.py`) 8.3% / 1.162 / -12.1%, halves 1.235 / 1.100 — 4a PASS on U56. B136: 12.17% / 1.1617 /
+  **-16.65%** vs live B136 MaxDD -12.24% — **4a FAIL**. Not promoted, same reason as the prior seven weeks. Re-run outputs
+  restored to the committed versions. No edit to RULES.md, baseline.py, bot.py or scan.py.
+- **Operational:** no price lag this week; the Fri 11-20 rebalance ran (13 exits + AMD buy in the ledger; 15 Alpaca
+  orders). Alpaca now holds 1 share each of five OUT names the ledger sold in full (EFA, ITB, IWM, TSLA, XLB), 1 extra
+  AAPL, 1 fewer AMD (no Alpaca AMD buy on 11-21) and 1 fewer XLV. EEM residual from last week is cleared.
