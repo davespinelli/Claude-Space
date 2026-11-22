@@ -129,3 +129,19 @@ Written by the weekly tracker email so patterns accumulate. vs S&P = return sinc
 | 10 | TREE | Watch 3 | +34.8% | 64 | Q3 results on Nov 3 showed revenue up 12%, a tenth straight double-digit quarter, led by Insurance up 15% [8-K 2.02] |
 
 **Pattern:** Call and conviction still do not separate winners from losers: the top 10 are 9 Watch and 1 Passed, mostly conviction 3, while the bottom 10 hold 6 Watch, 3 Passed and the desk's one Pick (STRA). Winners are notes on improving or recurring businesses the desk found mispriced, while laggards are mostly levered, shrinking or reimbursement-hit businesses (BW, VRRM, SSTK, CRMD, AKBA). Results season mattered more than ever this week: six of the top 10 rose on Q3 results with raised guidance, but nearly all the bottom 10 also reported and fell, so results cut both ways. This matches earlier weeks, and six of last week's top 10 remain, so the winners keep persisting.
+
+## 2026-11-22 (prices 2026-11-21)
+| # | Ticker | Call | vs S&P | Days | Why |
+|---|---|---|---|---|---|
+| 1 | ADMA | Watch 3 | +61.3% | 65 | No new filing; the move matches the note's thesis that ASCENIV grew 23.5% and lifted gross margin to 69.4% [note] |
+| 2 | TLS | Passed 3 | +61.0% | 74 | Q3 results on Nov 9 showed record profit, revenue up 7.3% and guidance raised on $58M of new orders [8-K 2.02] |
+| 3 | IBEX | Watch 3 | +55.7% | 72 | Q1 results on Nov 5 showed record revenue up 16% to $175.2M, EPS up 20% and guidance raised [8-K 2.02] |
+| 4 | AZTA | Watch 2 | +54.7% | 72 | FY2026 results on Nov 10 guided FY2027 adjusted EBITDA margin up 2-2.5 points; annual report followed Nov 19 [8-K 2.02, 10-K] |
+| 5 | VNCE | Watch 2 | +53.8% | 66 | No new filing; the move matches the note's thesis of a real direct-to-consumer turn, comps up 18.4% with raised FY2026 guidance [note] |
+| 6 | BRBR | Watch 2 | +50.3% | 77 | FY2027 guide on Nov 18 of $310-350M adjusted EBITDA clears the note's $300M test; stock rose 42% this week [8-K 2.02, note] |
+| 7 | OSPN | Watch 3 | +44.8% | 71 | Q3 results on Oct 29 showed revenue up 12% to $63.9M and full-year revenue and ARR guidance raised [10-Q, 8-K exhibits] |
+| 8 | OPRT | Watch 3 | +44.0% | 70 | Q3 results on Nov 3 showed revenue growing again for the first time since 2023, net income up to $23M, outlook raised [8-K 2.02] |
+| 9 | RGR | Watch 3 | +43.9% | 75 | Q3 results on Nov 4 showed sales up 16.5%, gross margin up to 20.7% from 15.1% and EPS of $0.36 versus $0.10 [8-K 2.02] |
+| 10 | CPRI | Watch 3 | +42.2% | 76 | Nov 12 filing names an Estée Lauder executive CEO from Jan 4; beyond that and the note's $871M buyback, nothing explains the move [8-K 5.02] |
+
+**Pattern:** Call and conviction still do not separate winners from losers: the top 10 are 9 Watch and 1 Passed, mostly conviction 3, while the bottom 10 are 6 Watch and 4 Passed, also mostly conviction 3-4. Winners are notes on improving or recurring businesses the desk found mispriced, while laggards are mostly levered, shrinking or troubled businesses (TROX, VRRM, SSTK, BW, VATE, DCH). Results drove most winners again, with BRBR the new entrant after its FY2027 guide cleared the note's own test, but nine of the bottom 10 also had filings and fell, so results cut both ways. This matches earlier weeks, and eight of last week's top 10 remain, so the winners keep persisting.
