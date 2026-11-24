@@ -1,4 +1,4 @@
-# Research-verdict long/short — updated 2026-11-23
+# Research-verdict long/short — updated 2026-11-24
 
 **Portfolio rules.** Every IDEA enters the LONG book at the first close on or after its publication date; every PASS enters the SHORT book the same way. Within each book names are weighted 1/N, where N is the number of open positions in that book recomputed daily, capped at 20% per name; when N is below 5 the cap binds and the book is deliberately left partly in cash rather than levered up, so a two-name book runs 40% gross. A position stays open for 12 months or until a later note changes the verdict on that ticker (detected as a newer COVERAGE.md row for the same ticker), whichever comes first. The net exposure of the traded book (long weight minus short weight) is offset with IWM so the combined book is dollar-neutral; the raw long-minus-short spread is also reported unhedged. WATCH names are excluded from the traded book and carried as a separate long-only basket, for information only. Returns are price-only on adjusted closes with no costs deducted; an estimate at 10 bps per unit of turnover is printed separately. Cash earns 0%.
 
@@ -7,17 +7,17 @@
 
 | Book | Since-inception return | Ann. vol | Sharpe |
 |---|---|---|---|
-| Long book (IDEA) | -12.84% | 23.3% | -2.54 |
+| Long book (IDEA) | -12.94% | 23.2% | -2.57 |
 | Short book (PASS) | -14.66% | 19.2% | -3.61 |
-| Spread (long − short, unhedged) | +2.06% | 15.5% | 0.67 |
-| Hedged book (dollar-neutral vs IWM) | +0.60% | 15.4% | 0.25 |
+| Spread (long − short, unhedged) | +1.93% | 15.4% | 0.63 |
+| Hedged book (dollar-neutral vs IWM) | +0.47% | 15.4% | 0.21 |
 | WATCH basket (excluded, long-only) | -5.73% | 20.8% | -1.17 |
 | IWM | -9.99% | 21.2% | -2.13 |
 | SPY | -5.99% | 20.5% | -1.25 |
 
 Hit rate: longs beating IWM since entry 20% (1/5) · PASS names underperforming IWM since entry 62% (21/34).
 
-*Over 56 trading days the hedged verdict book returned +0.60% (Sharpe 0.25); longs beat IWM 20% of the time and shorts underperformed IWM 62% of the time.*
+*Over 56 trading days the hedged verdict book returned +0.47% (Sharpe 0.21); longs beat IWM 20% of the time and shorts underperformed IWM 62% of the time.*
 
 <!--/LS_SUMMARY-->
 
@@ -28,7 +28,7 @@ Estimated trading cost, not deducted above: 8.63 units of cumulative turnover ac
 | Ticker | Verdict | Published | Entry date | Entry | Current | Return | IWM | vs IWM | Status |
 |---|---|---|---|---|---|---|---|---|---|
 | CCSI | IDEA | 2026-09-04 | 2026-09-04 | 35.36 | 40.39 | +14.23% | -9.99% | +24.22% | open |
-| NLCP | IDEA | 2026-09-16 | 2026-09-16 | 14.76 | 13.30 | -9.87% | -6.40% | -3.47% | open |
+| NLCP | IDEA | 2026-09-16 | 2026-09-16 | 14.76 | 13.22 | -10.43% | -6.40% | -4.03% | open |
 | NPB | IDEA | 2026-09-12 | 2026-09-14 | 16.95 | 14.77 | -12.85% | -7.46% | -5.39% | open |
 | STRA | IDEA | 2026-09-10 | 2026-09-10 | 81.03 | 51.39 | -36.58% | -7.39% | -29.19% | open |
 | STRT | IDEA | 2026-09-04 | 2026-09-04 | 75.84 | 62.74 | -17.27% | -9.99% | -7.28% | open |
@@ -46,7 +46,7 @@ Estimated trading cost, not deducted above: 8.63 units of cumulative turnover ac
 | INVX | PASS | 2026-09-22 | 2026-09-22 | 27.97 | 22.82 | -18.41% | -7.48% | -10.94% | open |
 | KODK | PASS | 2026-09-06 | 2026-09-08 | 9.28 | 8.18 | -11.85% | -9.58% | -2.27% | open |
 | LAND | PASS | 2026-09-12 | 2026-09-14 | 9.24 | 6.27 | -32.18% | -7.46% | -24.72% | open |
-| MBLY | PASS | 2026-09-16 | 2026-09-16 | 7.82 | 4.80 | -38.55% | -6.40% | -32.15% | open |
+| MBLY | PASS | 2026-09-16 | 2026-09-16 | 7.82 | 4.81 | -38.49% | -6.40% | -32.09% | open |
 | MLKN | PASS | 2026-09-09 | 2026-09-09 | 21.65 | 20.26 | -6.42% | -8.33% | +1.91% | open |
 | MRBK | PASS | 2026-09-12 | 2026-09-14 | 19.60 | 15.00 | -23.48% | -7.46% | -16.02% | open |
 | MVBF | PASS | 2026-09-19 | 2026-09-21 | 30.30 | 23.20 | -23.43% | -6.95% | -16.49% | open |
@@ -69,8 +69,8 @@ Estimated trading cost, not deducted above: 8.63 units of cumulative turnover ac
 | ACIC | WATCH | 2026-09-09 | 2026-09-09 | 9.29 | 9.91 | +6.67% | -8.33% | +15.00% | open |
 | ADMA | WATCH | 2026-09-16 | 2026-09-16 | 8.90 | 13.50 | +51.69% | -6.40% | +58.09% | open |
 | AII | WATCH | 2026-09-11 | 2026-09-11 | 25.93 | 29.82 | +15.00% | -7.77% | +22.78% | open |
-| AKBA | WATCH | 2026-09-07 | 2026-09-08 | 1.03 | 0.41 | -60.21% | -9.58% | -50.63% | open |
-| APEI | WATCH | 2026-09-05 | 2026-09-08 | 45.36 | 41.44 | -8.63% | -9.58% | +0.95% | open |
+| AKBA | WATCH | 2026-09-07 | 2026-09-08 | 1.03 | 0.41 | -60.19% | -9.58% | -50.61% | open |
+| APEI | WATCH | 2026-09-05 | 2026-09-08 | 45.36 | 41.45 | -8.62% | -9.58% | +0.96% | open |
 | ARRY | WATCH | 2026-09-06 | 2026-09-08 | 4.70 | 3.80 | -19.26% | -9.58% | -9.67% | open |
 | AZTA | WATCH | 2026-09-09 | 2026-09-09 | 30.15 | 47.78 | +58.47% | -8.33% | +66.80% | open |
 | BBCP | WATCH | 2026-09-06 | 2026-09-08 | 10.24 | 9.44 | -7.83% | -9.58% | +1.75% | open |
