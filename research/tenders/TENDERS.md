@@ -1,12 +1,12 @@
 # Tender offers with odd-lot priority
 
-_Generated 2026-11-26 · EDGAR form indexes, last 45 days · 244 tender filings → 159 distinct offers, of which 16 are common-stock self-tenders · 6 carry odd-lot priority (2 in common stock)._
+_Generated 2026-11-27 · EDGAR form indexes, last 45 days · 244 tender filings → 159 distinct offers, of which 16 are common-stock self-tenders · 6 carry odd-lot priority (2 in common stock)._
 
 ## Live share tenders
 
 | Ticker | Company | Type | Offer price / range | Current | Premium lo/hi | 99-sh profit lo/hi | Expires | Days | Odd-lot | Flags | Filing |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| MYPS | PLAYSTUDIOS, Inc. | Fixed price | $4.30 | $4.95 | -13.1% | $-64 | 2026-12-10 | 14 | yes | market above offer | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1823878/000207709626000313/0002077096-26-000313-index.htm) |
+| MYPS | PLAYSTUDIOS, Inc. | Fixed price | $4.30 | $4.95 | -13.1% | $-64 | 2026-12-10 | 13 | yes | market above offer | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1823878/000207709626000313/0002077096-26-000313-index.htm) |
 
 ### Odd-lot language, quoted
 
