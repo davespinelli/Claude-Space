@@ -1,4 +1,4 @@
-# Track record — updated 2026-11-26
+# Track record — updated 2026-11-27
 
 Every verdict since publication. Returns are price-only, no costs. IDEA = published pick; WATCH/PASS tracked so we learn from rejections.
 
