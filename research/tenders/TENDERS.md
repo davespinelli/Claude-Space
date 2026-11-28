@@ -1,12 +1,12 @@
 # Tender offers with odd-lot priority
 
-_Generated 2026-11-27 · EDGAR form indexes, last 45 days · 244 tender filings → 159 distinct offers, of which 16 are common-stock self-tenders · 6 carry odd-lot priority (2 in common stock)._
+_Generated 2026-11-28 · EDGAR form indexes, last 45 days · 245 tender filings → 161 distinct offers, of which 16 are common-stock self-tenders · 6 carry odd-lot priority (2 in common stock)._
 
 ## Live share tenders
 
 | Ticker | Company | Type | Offer price / range | Current | Premium lo/hi | 99-sh profit lo/hi | Expires | Days | Odd-lot | Flags | Filing |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| MYPS | PLAYSTUDIOS, Inc. | Fixed price | $4.30 | $4.95 | -13.1% | $-64 | 2026-12-10 | 13 | yes | market above offer | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1823878/000207709626000313/0002077096-26-000313-index.htm) |
+| MYPS | PLAYSTUDIOS, Inc. | Fixed price | $4.30 | $5.09 | -15.5% | $-78 | 2026-12-10 | 12 | yes | market above offer | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1823878/000207709626000313/0002077096-26-000313-index.htm) |
 
 ### Odd-lot language, quoted
 
@@ -37,7 +37,6 @@ Option/warrant exchanges, closed-end fund and BDC repurchases at net asset value
 | — | Highlands REIT, Inc. | share tender | $0.2000 | 2026-09-29 | unclear | no listed ticker (non-traded?); expired | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1661458/000110465926123427/0001104659-26-123427-index.htm) |
 | — | KKR FS Income Trust | fund/BDC repurchase (NAV) | not found | 2026-09-29 | no | expired | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1930679/000110465926118864/0001104659-26-118864-index.htm) |
 | — | KKR FS Income Trust Select | fund/BDC repurchase (NAV) | not found | 2026-09-29 | no | expired | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1975736/000110465926119075/0001104659-26-119075-index.htm) |
-| — | AB Private Credit Investors Corp | fund/BDC repurchase (NAV) | not found | 2026-09-30 | no | expired; final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1634452/000119312526458089/0001193125-26-458089-index.htm) |
 | — | AETOS DISTRESSED INVESTMENT STRATEGIES | fund/BDC repurchase (NAV) | not found | 2026-09-30 | no | expired; final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1169578/000121390026121696/0001213900-26-121696-index.htm) |
 | — | AETOS LONG/SHORT STRATEGIES FUND LLC | fund/BDC repurchase (NAV) | not found | 2026-09-30 | no | expired; final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1169583/000121390026121707/0001213900-26-121707-index.htm) |
 | — | AETOS MULTI-STRATEGY ARBITRAGE FUND LL | fund/BDC repurchase (NAV) | not found | 2026-09-30 | no | expired; final amendment (results) | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1169580/000121390026121703/0001213900-26-121703-index.htm) |
@@ -78,8 +77,8 @@ Option/warrant exchanges, closed-end fund and BDC repurchases at net asset value
 | HSBC | HSBC HOLDINGS PLC | share tender | $17.76 | 2026-11-19 | no | price parse suspect — verify against the filing; expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1089113/000162828026070495/0001628280-26-070495-index.htm) |
 | INVE | INVE Technologies, Inc. | share tender | $3.40 | 2026-11-19 | unclear | price parse suspect — verify against the filing; expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1036044/000121390026111186/0001213900-26-111186-index.htm) |
 | — | Innovation Access Fund | fund/BDC repurchase (NAV) | not found | 2026-11-25 | no | expired | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1905379/000120677426000579/0001206774-26-000579-index.htm) |
-| — | Partners Group Growth, LLC | fund/BDC repurchase (NAV) | not found | 2026-11-27 | no | final amendment (results) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1991706/000139834426019057/0001398344-26-019057-index.htm) |
-| — | Partners Group Private Equity Fund, LL | fund/BDC repurchase (NAV) | not found | 2026-11-27 | no | final amendment (results) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1447247/000139834426019042/0001398344-26-019042-index.htm) |
+| — | Partners Group Growth, LLC | fund/BDC repurchase (NAV) | not found | 2026-11-27 | no | expired; final amendment (results) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1991706/000139834426019057/0001398344-26-019057-index.htm) |
+| — | Partners Group Private Equity Fund, LL | fund/BDC repurchase (NAV) | not found | 2026-11-27 | no | expired; final amendment (results) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1447247/000139834426019042/0001398344-26-019042-index.htm) |
 | — | Ardian Access LLC | fund/BDC repurchase (NAV) | not found | 2026-11-30 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/2039471/000119312526441604/0001193125-26-441604-index.htm) |
 | — | BlackRock Private Investments Fund | fund/BDC repurchase (NAV) | not found | 2026-11-30 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1816389/000119312526441728/0001193125-26-441728-index.htm) |
 | — | Carlyle AlpInvest Private Markets Fund | fund/BDC repurchase (NAV) | not found | 2026-11-30 | no | final amendment (results) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1899610/000139834426019158/0001398344-26-019158-index.htm) |
@@ -157,7 +156,10 @@ Option/warrant exchanges, closed-end fund and BDC repurchases at net asset value
 | — | Blue Owl Credit Income Corp. | fund/BDC repurchase (NAV) | not found | 2026-12-31 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1812554/000162828026075980/0001628280-26-075980-index.htm) |
 | — | Blue Owl Technology Income Corp. | fund/BDC repurchase (NAV) | not found | 2026-12-31 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1869453/000162828026075988/0001628280-26-075988-index.htm) |
 | — | Dynamic Alternatives Fund | fund/BDC repurchase (NAV) | not found | 2026-12-31 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1854919/000158064226006974/0001580642-26-006974-index.htm) |
+| — | Alternative Investment Partners Absolu | fund/BDC repurchase (NAV) | not found | 2027-01-05 | no | final amendment (results) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1327228/000119312526479315/0001193125-26-479315-index.htm) |
+| — | Alternative Investment Partners Absolu | fund/BDC repurchase (NAV) | not found | 2027-01-05 | no | final amendment (results) | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1343668/000119312526479319/0001193125-26-479319-index.htm) |
 | — | TPG Private Markets Fund | fund/BDC repurchase (NAV) | not found | 2027-01-13 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/2060934/000158064226007707/0001580642-26-007707-index.htm) |
+| — | AB Private Credit Investors Corp | fund/BDC repurchase (NAV) | not found | 2027-01-26 | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1634452/000119312526479303/0001193125-26-479303-index.htm) |
 | JSPR | Jasper Therapeutics, Inc. | warrant exchange | $2.92 | 2030-03-18 | no | — | [SC TO-I/A](https://www.sec.gov/Archives/edgar/data/1788028/000121390026112090/0001213900-26-112090-index.htm) |
 | AYTU | AYTU BIOPHARMA, INC | pre-commencement (SC TO-C) | $2.70 | not found | no | — | [SC TO-C](https://www.sec.gov/Archives/edgar/data/1385818/000110465926128524/0001104659-26-128524-index.htm) |
 | — | Brookfield Infrastructure Income Fund  | fund/BDC repurchase (NAV) | not found | not found | no | — | [SC TO-I](https://www.sec.gov/Archives/edgar/data/1955857/000121390026123959/0001213900-26-123959-index.htm) |
